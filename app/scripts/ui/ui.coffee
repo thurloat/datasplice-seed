@@ -6,6 +6,6 @@ do (
   UI = React.createClass
     render: ->
       Jumbotron {},
-        'This is inside a jumbotron!'
+        'This is inside a jumbotron!!!'
 
   module.exports = UI

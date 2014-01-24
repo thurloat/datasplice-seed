@@ -30,15 +30,16 @@ browserifyOptions =
 app = fileset './app'
 dist = fileset './dist'
 port = 3000
-hostname = null # allow to connect from anywheresolve "#{dist.base}"
-base = path.resolve "#{dist.base}"
-directory = path.resolve "#{dist.base}"
+# allow to connect from anywhere
+hostname = null
 
 # Starts the webserver
 gulp.task 'webserver', ->
   application = connect()
-    .use(connect.static base)
-    .use(connect.directory directory)
+    # allows import of npm css
+    .use(connect.static path.resolve './node_modules')
+    .use(connect.static path.resolve "#{dist.base}")
+    .use(connect.directory path.resolve "#{dist.base}")
   (http.createServer application).listen port, hostname
 
 # Copies images to dest then reloads the page
@@ -73,22 +74,23 @@ gulp.task 'html', ->
     .pipe(gulp.dest "#{dist.base}")
     .pipe(refresh server)
 
-# Watches files for changes
-gulp.task 'watch', ->
+gulp.task 'livereload', ->
   server.listen 35729, (err) ->
     return (console.log err) if err
 
-    gulp.watch "#{app.images}/**", ->
-      gulp.run 'images'
+# Watches files for changes
+gulp.task 'watch', ->
+  gulp.watch "#{app.images}/**", ->
+    gulp.run 'images'
 
-    gulp.watch "#{app.scripts}/**", ->
-      gulp.run 'scripts'
+  gulp.watch "#{app.scripts}/**", ->
+    gulp.run 'scripts'
 
-    gulp.watch "#{app.styles}/**", ->
-      gulp.run 'styles'
+  gulp.watch "#{app.styles}/**", ->
+    gulp.run 'styles'
 
-    gulp.watch "#{app.base}/*.html", ->
-      gulp.run 'html'
+  gulp.watch "#{app.base}/*.html", ->
+    gulp.run 'html'
 
 # Opens the app in your browser
 gulp.task 'url', ->
@@ -116,4 +118,4 @@ gulp.task 'test', ->
 #   --open        : opens application in browser
 #
 gulp.task 'default', ['clean'], ->
-  gulp.run 'webserver', 'watch', 'package'
+  gulp.run 'webserver', 'livereload', 'watch', 'package'
