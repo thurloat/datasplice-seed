@@ -1,0 +1,31 @@
+{
+  "name": "datasplice-archetype",
+  "version": "0.0.0",
+  "dependencies": {
+    "envify": "~0.2.0",
+    "react": "~0.8.0"
+  },
+  "devDependencies": {
+    "gulp": "~3.3.2",
+    "gulp-util": "~2.2.10",
+    "gulp-concat": "~2.1.7",
+    "gulp-uglify": "~0.1.0",
+    "gulp-minify-css": "~0.2.0",
+    "gulp-jshint": "~1.3.4",
+    "gulp-rename": "~0.2.2",
+    "connect": "~2.12.0",
+    "open": "~0.0.4",
+    "gulp-coffee": "~1.2.5",
+    "coffee-script": "~1.6.3",
+    "gulp-bower": "0.0.2",
+    "gulp-sass": "~0.5.2",
+    "gulp-livereload": "~0.2.0",
+    "tiny-lr": "0.0.5",
+    "gulp-open": "~0.2.8",
+    "gulp-browserify": "~0.3.3",
+    "gulp-embedlr": "~0.5.2",
+    "gulp-spawn-mocha": "~0.1.0",
+    "coffeeify": "~0.5.2",
+    "gulp-clean": "~0.2.4"
+  }
+}
