@@ -28,7 +28,7 @@ browserifyOptions =
   extensions: ['.coffee']   # extension to skip when calling require()
 
 app = fileset './app'
-dist = fileset './build/dist'
+dist = fileset './dist'
 port = 3000
 hostname = null # allow to connect from anywheresolve "#{dist.base}"
 base = path.resolve "#{dist.base}"
@@ -103,14 +103,9 @@ gulp.task 'clean', ->
 gulp.task 'package', ['images', 'html', 'scripts', 'styles'], ->
   gulp.run 'url' if gulp.env.open
 
-gulp.task 'buildTest', ->
-  (gulp.src './test/spec/main.coffee', read: false)
+gulp.task 'test', ->
+  (gulp.src "#{app.scripts}/test.coffee", read: false)
     .pipe(browserify browserifyOptions)
-    .pipe(concat 'main.js')
-    .pipe(gulp.dest './build/test')
-
-gulp.task 'test', ['buildTest'], ->
-  (gulp.src './build/test/main.js', read: false)
     .pipe(mocha reporter: 'nyan')
     .on('error', gutil.log)
 
