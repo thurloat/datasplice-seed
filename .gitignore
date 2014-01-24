@@ -1,7 +1,9 @@
 .DS_Store
 *.sublime-*
 node_modules
-dist
+npm-debug.log
+build
 .idea
 .sass-cache
+.tmp
 bower_components

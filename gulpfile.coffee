@@ -5,13 +5,13 @@ lr = require 'tiny-lr'
 open = require 'gulp-open'
 sass = require 'gulp-sass'
 connect = require 'connect'
+mocha = require 'gulp-mocha'
 gutil = require 'gulp-util'
 clean = require 'gulp-clean'
 coffee = require 'gulp-coffee'
 concat = require 'gulp-concat'
 uglify = require 'gulp-uglify'
 embedlr = require 'gulp-embedlr'
-mocha = require 'gulp-spawn-mocha'
 refresh = require 'gulp-livereload'
 browserify = require 'gulp-browserify'
 server = do lr
@@ -22,17 +22,19 @@ fileset = (base) ->
   scripts: "#{base}/scripts"
   styles: "#{base}/styles"
 
-minify = ->
-  if gulp.env.production then uglify() else gutil.noop()
+browserifyOptions =
+  debug: not gulp.env.production
+  transform: ['coffeeify']
+  extensions: ['.coffee']   # extension to skip when calling require()
 
 app = fileset './app'
-dist = fileset './dist'
+dist = fileset './build/dist'
 port = 3000
-hostname = null # allow to connect from anywhere
+hostname = null # allow to connect from anywheresolve "#{dist.base}"
 base = path.resolve "#{dist.base}"
 directory = path.resolve "#{dist.base}"
 
-# Starts the webserver (http://localhost:3000)
+# Starts the webserver
 gulp.task 'webserver', ->
   application = connect()
     .use(connect.static base)
@@ -45,34 +47,11 @@ gulp.task 'images', ->
     .pipe(gulp.dest "#{dist.images}")
     .pipe(refresh server)
 
-# Compiles CoffeeScript files into js file
-# and reloads the page
-gulp.task 'coffee', ->
-  (gulp.src "#{app.scripts}/**/*.coffee")
-    .pipe(coffee bare: true).on('error', gutil.log)
-    .pipe(gulp.dest './.tmp')
-
-# NOTE: Intentionally not using browserify to transform the coffee
-#   See: https://github.com/deepak1556/gulp-browserify/pull/14/files
-# gulp.task 'scripts', ['coffee'], ->
-#   (gulp.src './.tmp/main.js')
-#     .pipe(browserify insertGlobals: true, debug: not gulp.env.production)
-#     .pipe(minify())
-#     .pipe(gulp.dest "#{dist.scripts}")
-#     .pipe(refresh server)
-
-# NOTE: Intentionally not using browserify to transform the coffee
-#   See: https://github.com/deepak1556/gulp-browserify/pull/14/files
 gulp.task 'scripts', ->
-  (gulp.src "#{app.scripts}/main.coffee", { read: false })
-    .pipe(browserify
-      debug: not gulp.env.production
-      insertGlobals: true
-      transform: ['coffeeify']
-      extensions: ['.coffee']   # extension to skip when calling require()
-    )
+  (gulp.src "#{app.scripts}/main.coffee", read: false)
+    .pipe(browserify browserifyOptions)
     .pipe(concat 'main.js')
-    .pipe(minify())
+    .pipe(if gulp.env.production then uglify() else gutil.noop())
     .pipe(gulp.dest "#{dist.scripts}")
     .pipe(refresh server)
 
@@ -89,8 +68,9 @@ gulp.task 'styles', ->
 # Copy the HTML to dist
 gulp.task 'html', ->
   (gulp.src "#{app.base}/*.html")
-    .pipe(do embedlr) # embeds the live reload script
-    .pipe(gulp.dest 'dist')
+    # embeds the live reload script
+    .pipe(if gulp.env.production then gutil.noop() else embedlr())
+    .pipe(gulp.dest "#{dist.base}")
     .pipe(refresh server)
 
 # Watches files for changes
@@ -119,13 +99,26 @@ gulp.task 'url', ->
 gulp.task 'clean', ->
   (gulp.src "#{dist.base}", read: false)
     .pipe(clean force: true)
-  (gulp.src '.tmp', read: false)
-    .pipe(clean force: true)
 
 gulp.task 'package', ['images', 'html', 'scripts', 'styles'], ->
   gulp.run 'url' if gulp.env.open
 
-# The default task
-# Run with --production for minification of JS
+gulp.task 'buildTest', ->
+  (gulp.src './test/spec/main.coffee', read: false)
+    .pipe(browserify browserifyOptions)
+    .pipe(concat 'main.js')
+    .pipe(gulp.dest './build/test')
+
+gulp.task 'test', ['buildTest'], ->
+  (gulp.src './build/test/main.js', read: false)
+    .pipe(mocha reporter: 'nyan')
+    .on('error', gutil.log)
+
+# The default task.
+#
+# Options:
+#   --production  : minifies JS
+#   --open        : opens application in browser
+#
 gulp.task 'default', ['clean'], ->
   gulp.run 'webserver', 'watch', 'package'
