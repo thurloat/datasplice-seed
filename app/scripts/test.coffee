@@ -1,11 +1,11 @@
-do (
-  chai = require 'chai'
-  sinonChai = require 'sinon-chai'
+chai = require 'chai'
+sinonChai = require 'sinon-chai'
 
-  # TODO: do this dynamically
-  TestMe = require './util/testme_spec'
-) ->
-  chai.use sinonChai
+# enable 'should' assertion syntax
+# TODO: configure this in gulpfile
+expect = chai.expect
+chai.use sinonChai
+chai.should()
 
-  # enable 'should' assertion syntax
-  chai.should()
+# TODO: do this dynamically
+require './util/add_spec'

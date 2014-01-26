@@ -1,10 +1,11 @@
-do(
+do (
   React = require 'react'
 ) ->
 
   {div} = React.DOM
 
   Jumbotron = React.createClass
+
     propTypes:
       fullWidth: React.PropTypes.bool
 
@@ -12,12 +13,11 @@ do(
       fullWidth: true
 
     render: ->
-      if @props.fullWidth
-        div className: 'jumbotron',
+      div className: 'jumbotron',
+        if @props.fullWidth
           div className: 'container',
             @props.children
-      else
-        div className: 'jumbotron',
+        else
           @props.children
 
   module.exports = Jumbotron
