@@ -22,7 +22,7 @@ server = do lr
 fileset = (base) ->
   base: base
   images: "#{base}/images"
-  scripts: "#{base}/scripts/"
+  scripts: "#{base}/src/"
   styles: "#{base}/styles"
 
 browserifyOptions =
@@ -33,7 +33,7 @@ browserifyOptions =
 app = fileset './app'
 build = './build'
 dist = fileset "#{build}/dist"
-mocha = fileset "#{build}/mocha"
+test = fileset "#{build}/test"
 port = 3000
 # allow to connect from anywhere
 hostname = null
@@ -41,11 +41,10 @@ hostname = null
 # Starts the webserver
 gulp.task 'webserver', ->
   application = connect()
-    # allows import of npm css
+    # allows import of npm resources
     .use(connect.static path.resolve './node_modules')
     # Mount the mocha tests
-    .use(connect.static path.resolve "#{mocha.base}")
-    # .use(connect.directory path.resolve "#{mocha.base}")
+    .use(connect.static path.resolve "#{test.base}")
     # Mount the app
     .use(connect.static path.resolve "#{dist.base}")
     .use(connect.directory path.resolve "#{dist.base}")
@@ -65,21 +64,21 @@ gulp.task 'scripts', ->
     .pipe(gulp.dest "#{dist.scripts}")
     .pipe(refresh server)
 
-gulp.task 'mocha-scripts', ['scripts'], ->
+gulp.task 'test-scripts', ['scripts'], ->
   (gulp.src "#{app.scripts}/test.coffee", read: false)
     .pipe(browserify browserifyOptions)
     .pipe(rename 'test.js')
-    .pipe(gulp.dest "#{mocha.scripts}")
+    .pipe(gulp.dest "#{test.scripts}")
     .pipe(refresh server)
 
 # Compiles Sass files into css file
 # and reloads the styles
-gulp.task 'mocha-styles', ->
+gulp.task 'test-styles', ->
   (gulp.src "#{app.styles}/test.scss")
     # TODO: should include pattern for styles from React components
     .pipe(sass includePaths: ['styles/includes']).on('error', gutil.log)
     .pipe(concat 'test.css')
-    .pipe(gulp.dest "#{mocha.styles}")
+    .pipe(gulp.dest "#{test.styles}")
     .pipe(refresh server)
 
 # Compiles Sass files into css file
@@ -102,11 +101,11 @@ gulp.task 'html', ->
     .pipe(refresh server)
 
 # Copy the HTML to mocha
-gulp.task 'mocha-html', ->
+gulp.task 'test-html', ->
   (gulp.src "#{app.base}/test.html")
     # embeds the live reload script
     .pipe(embedlr())
-    .pipe(gulp.dest "#{mocha.base}")
+    .pipe(gulp.dest "#{test.base}")
     .pipe(refresh server)
 
 gulp.task 'livereload', ->
@@ -116,10 +115,10 @@ gulp.task 'livereload', ->
 # Watches files for changes
 gulp.task 'watch', ->
   gulp.watch "#{app.images}/**", ['images']
-  gulp.watch "#{app.scripts}/**", ['scripts', 'mocha-scripts']
-  gulp.watch "#{app.styles}/**", ['styles', 'mocha-styles']
+  gulp.watch "#{app.scripts}/**", ['scripts', 'test-scripts']
+  gulp.watch "#{app.styles}/**", ['styles', 'test-styles']
   gulp.watch "#{app.base}/index.html", ['html']
-  gulp.watch "#{app.base}/test.html", ['mocha-html']
+  gulp.watch "#{app.base}/test.html", ['test-html']
 
 # Opens the app in your browser
 gulp.task 'browse', ->
@@ -131,8 +130,8 @@ gulp.task 'clean', ->
   (gulp.src "#{build}", read: false)
     .pipe(clean force: true)
 
-gulp.task 'dist', ['html', 'images', 'styles', 'scripts']
-gulp.task 'mocha', ['mocha-html', 'mocha-styles', 'mocha-scripts']
+gulp.task 'build-dist', ['html', 'images', 'styles', 'scripts']
+gulp.task 'build-test', ['test-html', 'test-styles', 'test-scripts']
 
 gulp.task 'test', ->
   (gulp.src "#{app.scripts}/test.coffee", read: false)
@@ -140,11 +139,12 @@ gulp.task 'test', ->
     .pipe(mocha reporter: 'nyan').on('error', gutil.log)
 
 do (
-  serverOpts = ['dist', 'mocha', 'webserver', 'livereload', 'watch']
+  serverOpts = ['build', 'webserver', 'livereload', 'watch']
 ) ->
   serverOpts.push 'browse' if gutil.env.open
   gulp.task 'server', serverOpts
 
+gulp.task 'build', ['build-dist', 'build-test']
 
 # https://github.com/gulpjs/gulp/blob/master/docs/API.md#async-task-support
-gulp.task 'default', ['dist', 'mocha']
+gulp.task 'default', ['clean', 'build']
