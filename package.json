@@ -33,6 +33,7 @@
     "gulp-mocha": "~0.4.1",
     "envify": "~0.2.0",
     "mocha": "~1.17.1",
-    "caching-coffeeify": "~0.3.0"
+    "caching-coffeeify": "~0.3.0",
+    "coffeeify": "~0.5.2"
   }
 }

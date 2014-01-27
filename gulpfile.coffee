@@ -75,10 +75,7 @@ gulp.task 'test-scripts', ['scripts'], ->
 # Compiles Sass files into css file
 # and reloads the styles
 gulp.task 'test-styles', ->
-  (gulp.src "#{app.styles}/test.scss")
-    # TODO: should include pattern for styles from React components
-    .pipe(sass includePaths: ['styles/includes']).on('error', gutil.log)
-    .pipe(concat 'test.css')
+  (gulp.src "node_modules/gulp-mocha/node_modules/mocha/mocha.css")
     .pipe(gulp.dest "#{test.styles}")
     .pipe(refresh server)
 
