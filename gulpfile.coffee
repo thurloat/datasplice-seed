@@ -128,7 +128,8 @@ gulp.task 'livereload', ->
 gulp.task 'watch', ->
   gulp.watch "#{app.images}/**", ['images']
   gulp.watch "#{app.scripts}/**", ['scripts', 'test-scripts']
-  gulp.watch "#{app.styles}/**", ['styles', 'test-styles']
+  gulp.watch "#{app.scripts}/**/*.scss", ['styles']
+  gulp.watch "#{app.styles}/**", ['styles']
   gulp.watch "#{app.base}/index.html", ['html']
   gulp.watch "#{app.base}/test.html", ['test-html']
 
