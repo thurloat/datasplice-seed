@@ -75,7 +75,7 @@ gulp.task 'test-scripts', ['scripts'], ->
 # Compiles Sass files into css file
 # and reloads the styles
 gulp.task 'test-styles', ->
-  (gulp.src "node_modules/gulp-mocha/node_modules/mocha/mocha.css")
+  (gulp.src "node_modules/mocha/mocha.css", read:false)
     .pipe(gulp.dest "#{test.styles}")
     .pipe(refresh server)
 
