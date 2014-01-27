@@ -1,13 +1,6 @@
-html, body {
-    height: 100%;
-}
 
-html {
-    display: table;
-    margin: auto;
-}
-
+@import "../../../bootstrap-sass/dist/css/bootstrap.css";
+@import "../../../bootstrap-sass/dist/css/bootstrap-theme.css";
 body {
-    text-align: center;
-    display: table-cell;
+  padding: 10px;
 }

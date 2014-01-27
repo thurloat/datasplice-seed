@@ -41,8 +41,9 @@ hostname = null
 # Starts the webserver
 gulp.task 'webserver', ->
   application = connect()
-    # allows import of npm resources
+    # allows import of npm/bower resources
     .use(connect.static path.resolve './node_modules')
+    .use(connect.static path.resolve './bower_components')
     # Mount the mocha tests
     .use(connect.static path.resolve "#{test.base}")
     # Mount the app
@@ -58,7 +59,7 @@ gulp.task 'images', ->
 
 gulp.task 'scripts', ->
   (gulp.src "#{app.scripts}/index.coffee", read: false)
-    .pipe(browserify browserifyOptions)
+    .pipe(browserify browserifyOptions).on('error', gutil.log)
     .pipe(rename 'index.js')
     .pipe(if gutil.env.production then uglify() else gutil.noop())
     .pipe(gulp.dest "#{dist.scripts}")
@@ -66,7 +67,7 @@ gulp.task 'scripts', ->
 
 gulp.task 'test-scripts', ['scripts'], ->
   (gulp.src "#{app.scripts}/test.coffee", read: false)
-    .pipe(browserify browserifyOptions)
+    .pipe(browserify browserifyOptions).on('error', gutil.log)
     .pipe(rename 'test.js')
     .pipe(gulp.dest "#{test.scripts}")
     .pipe(refresh server)

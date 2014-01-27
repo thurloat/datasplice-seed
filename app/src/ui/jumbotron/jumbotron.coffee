@@ -13,11 +13,13 @@ do (
       fullWidth: true
 
     render: ->
-      div className: 'jumbotron',
-        if @props.fullWidth
-          div className: 'container',
-            @props.children
-        else
+      contents = if @props.fullWidth
+        div className: 'container',
           @props.children
+      else
+        @props.children
+
+      div className: 'jumbotron',
+        contents
 
   module.exports = Jumbotron
