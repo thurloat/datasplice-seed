@@ -24,10 +24,8 @@ do (
           gulp                        # defaults to [clean, build]
           gulp clean                  # deletes build dir
           gulp test                   # runs nyancat in the console
-          gulp build  [--production]  # compiles and creates build/dist and build/test, [--production] flag minifies js/css files in build/dist
+          gulp build  [--production]  # builds src and test code, [--production] flag minifies js/css files in build/dist
           gulp server [--open]        # starts dev server, [--open] flag opens your browser automatically
           """
-        p {},
-          img src: 'images/datasplice_logo.jpg'
 
   module.exports = UI
