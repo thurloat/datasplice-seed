@@ -27,7 +27,7 @@ fileset = (base) ->
 
 browserifyOptions =
   debug: not gutil.env.production
-  transform: ['coffeeify']
+  transform: ['caching-coffeeify']
   extensions: ['.coffee']   # extension to skip when calling require()
 
 app = fileset './app'
