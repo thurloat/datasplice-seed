@@ -31,6 +31,16 @@ browserifyOptions =
   transform: ['caching-coffeeify']
   extensions: ['.coffee']   # extension to skip when calling require()
 
+vendorAssets = [
+  {
+    name: 'normalize-css'
+    base: './bower_components/normalize-css'
+    assets: [
+      {src: 'normalize.css', dest: ''}
+    ]
+  }
+]
+
 app = fileset './app'
 build = './build'
 dist = fileset "#{build}/dist"
@@ -132,8 +142,21 @@ gulp.task 'clean', ->
   (gulp.src "#{build}", read: false)
     .pipe(clean force: true)
 
-gulp.task 'build-dist', ['html', 'images', 'styles', 'scripts']
+gulp.task 'build-dist', ['build-vendor', 'html', 'images', 'styles', 'scripts']
 gulp.task 'build-test', ['test-html', 'test-styles', 'test-scripts']
+
+# Grabs assets from vendors and puts in build/dist/vendor
+# TODO: this doesn't seem very coffeescriptish
+gulp.task 'build-vendor', ->
+  cyan = gutil.colors.cyan
+  for vendor in vendorAssets
+    gutil.log "Building vendor #{cyan vendor.base}"
+    for asset in vendor.assets
+      src = "#{vendor.base}/#{asset.src}"
+      dest = "#{dist.base}/vendor/#{vendor.name}/#{asset.dest}"
+      gutil.log "\tCopying #{cyan src} to #{cyan dest}"
+      (gulp.src src)
+        .pipe(gulp.dest dest)
 
 gulp.task 'test', ->
   (gulp.src "#{app.scripts}/test.coffee", read: false)
