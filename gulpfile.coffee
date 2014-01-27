@@ -6,12 +6,13 @@ lr = require 'tiny-lr'
 open = require 'gulp-open'
 sass = require 'gulp-sass'
 connect = require 'connect'
-mocha = require 'gulp-mocha'
+es = require 'event-stream'
 gutil = require 'gulp-util'
 clean = require 'gulp-clean'
-rename = require 'gulp-rename'
+mocha = require 'gulp-mocha'
 coffee = require 'gulp-coffee'
 concat = require 'gulp-concat'
+rename = require 'gulp-rename'
 uglify = require 'gulp-uglify'
 embedlr = require 'gulp-embedlr'
 refresh = require 'gulp-livereload'
@@ -82,13 +83,16 @@ gulp.task 'test-styles', ->
 # Compiles Sass files into css file
 # and reloads the styles
 gulp.task 'styles', ->
-  (gulp.src "#{app.styles}/index.scss")
-    # TODO: should include pattern for styles from React components
-    .pipe(sass includePaths: ['styles/includes']).on('error', gutil.log)
-    .pipe(rename 'index.css')
-    .pipe(if gutil.env.production then minifycss() else gutil.noop())
-    .pipe(gulp.dest "#{dist.styles}")
-    .pipe(refresh server)
+  es.concat(
+    (gulp.src "#{app.styles}/index.scss")
+      # TODO: should include pattern for styles from React components
+      .pipe(sass includePaths: ['styles/includes']).on('error', gutil.log)
+    ,(gulp.src "bower_components/normalize-css/normalize.css")
+  )
+  .pipe(rename 'index.css')
+  .pipe(if gutil.env.production then minifycss() else gutil.noop())
+  .pipe(gulp.dest "#{dist.styles}")
+  .pipe(refresh server)
 
 # Copy the HTML to dist
 gulp.task 'html', ->
