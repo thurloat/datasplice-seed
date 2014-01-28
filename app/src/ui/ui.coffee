@@ -23,11 +23,14 @@ do (
             'Main gulp tasks'
           pre {},
             """
-            gulp                        # defaults to [clean, build]
-            gulp clean                  # deletes build dir
-            gulp test                   # runs nyancat in the console
-            gulp build  [--production]  # builds src and test code, [--production] flag minifies js/css files in build/dist
-            gulp server [--open]        # starts dev server, [--open] flag opens your browser automatically
+            gulp                            # defaults to [clean, build]
+            gulp clean                      # deletes build dir
+            gulp test                       # runs nyancat in the console
+            gulp build  [--production]      # builds src and test code
+                                            # [--production] flag minifies js/css files in build/dist
+            gulp server [--open] [--lrport] # starts dev server
+                                            # [--open] flag opens your browser automatically
+                                            # [--lrport[ flag specifies live reload port (35729 by default)
             """
 
   module.exports = UI

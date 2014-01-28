@@ -55,6 +55,9 @@ test = fileset "#{build}/test"
 port = 3000
 # allow to connect from anywhere
 hostname = null
+# change this to something unique if you want to run multiple projects
+# side-by-side
+lrPort = gutil.env.lrport or 35729
 
 # Starts the webserver
 gulp.task 'webserver', ->
@@ -115,7 +118,7 @@ gulp.task 'styles', ->
 gulp.task 'html', ->
   (gulp.src "#{app.base}/index.html")
     # embeds the live reload script
-    .pipe(if gutil.env.production then gutil.noop() else embedlr())
+    .pipe(if gutil.env.production then gutil.noop() else embedlr port: lrPort)
     .pipe(gulp.dest "#{dist.base}")
     .pipe(refresh server)
 
@@ -128,7 +131,7 @@ gulp.task 'test-html', ->
     .pipe(refresh server)
 
 gulp.task 'livereload', ->
-  server.listen 35729, (err) ->
+  server.listen lrPort, (err) ->
     return (console.log err) if err
 
 # Watches files for changes
