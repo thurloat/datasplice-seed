@@ -36,7 +36,14 @@ vendorAssets = [
     name: 'normalize-css'
     base: './bower_components/normalize-css'
     assets: [
-      {src: 'normalize.css', dest: ''}
+      { src: 'normalize.css', dest: '' }
+    ]
+  }
+  {
+    name: 'glyphicons'
+    base: './bower_components/bootstrap-sass/fonts'
+    assets: [
+      { src: '*.*', dest: 'fonts', shared: true }
     ]
   }
 ]
@@ -154,7 +161,11 @@ gulp.task 'build-vendor', ->
     gutil.log "Building vendor #{cyan vendor.base}"
     for asset in vendor.assets
       src = "#{vendor.base}/#{asset.src}"
-      dest = "#{dist.base}/vendor/#{vendor.name}/#{asset.dest}"
+      # some assets assume a particular path in the file structure
+      dest = if asset.shared
+        "#{dist.base}/#{asset.dest}"
+      else
+        "#{dist.base}/vendor/#{vendor.name}/#{asset.dest}"
       gutil.log "\tCopying #{cyan src} to #{cyan dest}"
       (gulp.src src)
         .pipe(gulp.dest dest)
