@@ -26,7 +26,6 @@
     "gulp-open": "~0.2.8",
     "gulp-browserify": "~0.3.4",
     "gulp-embedlr": "~0.5.2",
-    "gulp-spawn-mocha": "~0.1.0",
     "gulp-clean": "~0.2.4",
     "chai": "~1.8.1",
     "sinon": "~1.7.3",
