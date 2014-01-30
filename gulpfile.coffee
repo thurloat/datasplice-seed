@@ -74,65 +74,68 @@ gulp.task 'webserver', ->
 
 # Copies images to dest then reloads the page
 gulp.task 'images', ->
-  (gulp.src "#{app.images}/**/*")
-    .pipe(gulp.dest "#{dist.images}")
-    .pipe(refresh server)
+  gulp.src "#{app.images}/**/*"
+    .pipe gulp.dest "#{dist.images}"
+    .pipe refresh server
 
 gulp.task 'scripts', ->
-  (gulp.src "#{app.scripts}/index.coffee", read: false)
-    .pipe(browserify browserifyOptions).on('error', gutil.log)
-    .pipe(rename 'index.js')
-    .pipe(if gutil.env.production then uglify() else gutil.noop())
-    .pipe(gulp.dest "#{dist.scripts}")
-    .pipe(refresh server)
+  gulp.src "#{app.scripts}/index.coffee", read: false
+    .pipe browserify browserifyOptions
+    .on 'error', gutil.log
+    .pipe rename 'index.js'
+    .pipe if gutil.env.production then uglify() else gutil.noop()
+    .pipe gulp.dest "#{dist.scripts}"
+    .pipe refresh server
 
 gulp.task 'test-scripts', ['scripts'], ->
-  (gulp.src "#{app.scripts}/test.coffee", read: false)
-    .pipe(browserify browserifyOptions).on('error', gutil.log)
-    .pipe(rename 'test.js')
-    .pipe(gulp.dest "#{test.scripts}")
-    .pipe(refresh server)
+  gulp.src "#{app.scripts}/test.coffee", read: false
+    .pipe browserify browserifyOptions
+    .on 'error', gutil.log
+    .pipe rename 'test.js'
+    .pipe gulp.dest "#{test.scripts}"
+    .pipe refresh server
 
 # Compiles Sass files into css file
 # and reloads the styles
 gulp.task 'test-styles', ->
-  (gulp.src "node_modules/mocha/mocha.css")
-    .pipe(gulp.dest "#{test.styles}")
-    .pipe(refresh server)
+  gulp.src "node_modules/mocha/mocha.css"
+    .pipe gulp.dest "#{test.styles}"
+    .pipe refresh server
 
 # Compiles Sass files into css file
 # and reloads the styles
 gulp.task 'styles', ->
   es.concat(
-    (gulp.src "#{app.styles}/index.scss")
+    gulp.src "#{app.styles}/index.scss"
       # TODO: should include pattern for styles from React components
-      .pipe(sass includePaths: ['styles/includes']).on('error', gutil.log)
-    ,(gulp.src "bower_components/normalize-css/normalize.css")
+      .pipe sass includePaths: ['styles/includes']
+      .on 'error', gutil.log
+    , gulp.src "bower_components/normalize-css/normalize.css"
   )
-  .pipe(rename 'index.css')
-  .pipe(if gutil.env.production then minifycss() else gutil.noop())
-  .pipe(gulp.dest "#{dist.styles}")
-  .pipe(refresh server)
+  .pipe rename 'index.css'
+  .pipe if gutil.env.production then minifycss() else gutil.noop()
+  .pipe gulp.dest "#{dist.styles}"
+  .pipe refresh server
 
 # Copy the HTML to dist
 gulp.task 'html', ->
-  (gulp.src "#{app.base}/index.html")
+  gulp.src "#{app.base}/index.html"
     # embeds the live reload script
-    .pipe(if gutil.env.production then gutil.noop() else embedlr port: lrPort)
-    .pipe(gulp.dest "#{dist.base}")
-    .pipe(refresh server)
+    .pipe if gutil.env.production then gutil.noop() else embedlr port: lrPort
+    .pipe gulp.dest "#{dist.base}"
+    .pipe refresh server
 
 # Copy the HTML to mocha
 gulp.task 'test-html', ->
-  (gulp.src "#{app.base}/test.html")
+  gulp.src "#{app.base}/test.html"
     # embeds the live reload script
-    .pipe(embedlr())
-    .pipe(gulp.dest "#{test.base}")
-    .pipe(refresh server)
+    .pipe embedlr()
+    .pipe gulp.dest "#{test.base}"
+    .pipe refresh server
 
 gulp.task 'livereload', ->
   server.listen lrPort, (err) ->
-    return (console.log err) if err
+    console.log err if err
 
 # Watches files for changes
 gulp.task 'watch', ->
@@ -146,12 +149,12 @@ gulp.task 'watch', ->
 # Opens the app in your browser
 gulp.task 'browse', ->
   options = url: "http://localhost:#{port}"
-  gulp.src("#{dist.base}/index.html")
-    .pipe(open("", options))
+  gulp.src "#{dist.base}/index.html"
+    .pipe open '', options
 
 gulp.task 'clean', ->
-  (gulp.src "#{build}", read: false)
-    .pipe(clean force: true)
+  gulp.src "#{build}", read: false
+    .pipe clean force: true
 
 gulp.task 'build-dist', ['build-vendor', 'html', 'images', 'styles', 'scripts']
 gulp.task 'build-test', ['test-html', 'test-styles', 'test-scripts']
@@ -170,17 +173,17 @@ gulp.task 'build-vendor', ->
       else
         "#{dist.base}/vendor/#{vendor.name}/#{asset.dest}"
       gutil.log "\tCopying #{cyan src} to #{cyan dest}"
-      (gulp.src src)
-        .pipe(gulp.dest dest)
+      gulp.src src
+        .pipe gulp.dest dest
 
 gulp.task 'test', ->
-  (gulp.src "#{app.scripts}/test.coffee", read: false)
-    .pipe(browserify browserifyOptions).on('error', gutil.log)
-    .pipe(mocha reporter: 'nyan').on('error', gutil.log)
+  gulp.src "#{app.scripts}/test.coffee", read: false
+    .pipe browserify browserifyOptions
+    .on 'error', gutil.log
+    .pipe mocha reporter: 'nyan'
+    .on 'error', gutil.log
 
-do (
-  serverOpts = ['build', 'webserver', 'livereload', 'watch']
-) ->
+do (serverOpts = ['build', 'webserver', 'livereload', 'watch']) ->
   serverOpts.push 'browse' if gutil.env.open
   gulp.task 'server', serverOpts
 
