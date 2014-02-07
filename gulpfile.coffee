@@ -23,22 +23,13 @@ server = do lr
 fileset = (base) ->
   base: base
   images: "#{base}/images"
-  scripts: "#{base}/src/"
+  src: "#{base}/src/"
   styles: "#{base}/styles"
 
 browserifyOptions =
   debug: not gutil.env.production
-  transform: ['caching-coffeeify']
-  extensions: ['.coffee']   # extension to skip when calling require()
 
 vendorAssets = [
-  {
-    name: 'normalize-css'
-    base: './bower_components/normalize-css'
-    assets: [
-      { src: 'normalize.css', dest: '' }
-    ]
-  }
   {
     name: 'glyphicons'
     base: './bower_components/bootstrap-sass/fonts'
@@ -50,6 +41,7 @@ vendorAssets = [
 
 app = fileset './app'
 build = './build'
+js = "#{build}/js"
 dist = fileset "#{build}/dist"
 test = fileset "#{build}/test"
 port = 3000
@@ -72,27 +64,32 @@ gulp.task 'webserver', ->
     .use(connect.directory path.resolve "#{dist.base}")
   (http.createServer application).listen port, hostname
 
+gulp.task 'coffee', ->
+  gulp.src "#{app.src}/**/*.coffee"
+    .pipe coffee bare: true
+    .pipe gulp.dest "#{js}"
+
 # Copies images to dest then reloads the page
 gulp.task 'images', ->
   gulp.src "#{app.images}/**/*"
     .pipe gulp.dest "#{dist.images}"
     .pipe refresh server
 
-gulp.task 'scripts', ->
-  gulp.src "#{app.scripts}/index.coffee", read: false
+gulp.task 'scripts', ['coffee'], ->
+  gulp.src "#{js}/index.js", read: false
     .pipe browserify browserifyOptions
     .on 'error', gutil.log
     .pipe rename 'index.js'
     .pipe if gutil.env.production then uglify() else gutil.noop()
-    .pipe gulp.dest "#{dist.scripts}"
+    .pipe gulp.dest "#{dist.src}"
     .pipe refresh server
 
 gulp.task 'test-scripts', ['scripts'], ->
-  gulp.src "#{app.scripts}/test.coffee", read: false
+  gulp.src "#{js}/test.js", read: false
     .pipe browserify browserifyOptions
     .on 'error', gutil.log
     .pipe rename 'test.js'
-    .pipe gulp.dest "#{test.scripts}"
+    .pipe gulp.dest "#{test.src}"
     .pipe refresh server
 
 # Compiles Sass files into css file
@@ -140,8 +137,8 @@ gulp.task 'livereload', ->
 # Watches files for changes
 gulp.task 'watch', ->
   gulp.watch "#{app.images}/**", ['images']
-  gulp.watch "#{app.scripts}/**", ['scripts', 'test-scripts']
-  gulp.watch "#{app.scripts}/**/*.scss", ['styles']
+  gulp.watch "#{app.src}/**", ['scripts', 'test-scripts']
+  gulp.watch "#{app.src}/**/*.scss", ['styles']
   gulp.watch "#{app.styles}/**", ['styles']
   gulp.watch "#{app.base}/index.html", ['html']
   gulp.watch "#{app.base}/test.html", ['test-html']
@@ -177,7 +174,7 @@ gulp.task 'build-vendor', ->
         .pipe gulp.dest dest
 
 gulp.task 'test', ->
-  gulp.src "#{app.scripts}/test.coffee", read: false
+  gulp.src "#{app.src}/test.coffee", read: false
     .pipe browserify browserifyOptions
     .on 'error', gutil.log
     .pipe mocha reporter: 'nyan'
