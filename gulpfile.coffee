@@ -173,8 +173,8 @@ gulp.task 'build-vendor', ->
       gulp.src src
         .pipe gulp.dest dest
 
-gulp.task 'test', ->
-  gulp.src "#{app.src}/test.coffee", read: false
+gulp.task 'test', ['coffee'], ->
+  gulp.src "#{js}/test.js", read: false
     .pipe browserify browserifyOptions
     .on 'error', gutil.log
     .pipe mocha reporter: 'nyan'
