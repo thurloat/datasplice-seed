@@ -1,3 +1,21 @@
+DataSplice Seed
+===
+DataSplice Seed is a sample cross-platform web application that supports packaging as:
+
+- Standard webapp
+- [Chrome app](https://developer.chrome.com/apps/about_apps)
+- Android app
+- iOS app
+
+It is built with the following technologies:
+
+- App: [ReactJS](facebook.github.io/react/) / [SASS](sass-lang.com) / [When](https://github.com/cujojs/when)
+- Tests: [Mocha](visionmedia.github.io/mocha/) / [Chai](chaijs.com) / [SinonJS](http://sinonjs.org/)
+- Build: [GulpJS](gulpjs.com) / [Bower](bower.io) / [Browserify](browserify.org) / [Cordova](cordova.apache.org) / [MobileChromeApps](https://github.com/MobileChromeApps/mobile-chrome-apps)
+ - Note: we'll likely move away from Browserify in favor of something like [Webpack](webpack.github.io)
+
+### Build
+
 DataSplice seed builds to:
 
 - `build/js` unminified js
@@ -8,14 +26,22 @@ DataSplice seed builds to:
 
 Build tasks:
 
-- `gulp clean` deletes the build dir
+- `gulp clean` deletes `./build` and `./cordova/www/**/*`
 - `gulp` builds everything
-- `gulp build-web` creates build/js, build/web, and build/test
-- `gulp build-chrome` creates a chrome app in build/chrome
-- `gulp build-cordova` converts the chrome app into a cordova app in build/cordova
+- `gulp build-web` creates `./build/js`, `./build/web`, and `./build/test`
+- `gulp build-chrome` creates a chrome app in `./build/chrome`
+- `gulp build-cordova` copies to the chrome app to `./cordova/www`
+
+Dist tasks __(TODO)__:
+
+- `gulp dist-web` package webapp into `./dist/`
+- `gulp dist-chrome` package chrome `.crx` file into `./dist/`
+- `gulp dist-android` package `.apk` into `./dist/`
+- `gulp dist-ios` package ios file into `./dist/`
 
 Run tasks:
 
+- `gulp test` runs mocha tests in console
 - `gulp run-web` runs the web/test server on port 3000
 - `gulp run-ios` runs the ios emulator
 - `gulp run-android` runs the android emulator

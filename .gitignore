@@ -8,3 +8,4 @@ build
 .sass-cache
 .tmp
 bower_components
+local.properties

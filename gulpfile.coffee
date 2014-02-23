@@ -41,12 +41,14 @@ vendorAssets = [
 ]
 
 app = fileset './app'
+cordova = "./cordova"
 build = './build'
+dist = './dist'
+
 js = "#{build}/js"
 web = fileset "#{build}/web"
 test = fileset "#{build}/test"
 chrome = fileset "#{build}/chrome"
-cordova = fileset "#{build}/cordova"
 port = 3000
 # allow to connect from anywhere
 hostname = null
@@ -153,7 +155,7 @@ gulp.task 'browse', ->
     .pipe open '', options
 
 gulp.task 'clean', ->
-  gulp.src "#{build}", read: false
+  gulp.src ["#{build}", "#{cordova}/www/**/*"], read: false
     .pipe clean force: true
 
 gulp.task 'build-web', ['build-vendor', 'html', 'images', 'styles', 'scripts']
@@ -181,9 +183,21 @@ gulp.task 'build-chrome', ['build-web'], ->
   gulp.src ["#{web.base}/**/*", 'chromeapp.js', 'manifest.json']
     .pipe gulp.dest "#{chrome.base}"
 
-# Convert chrome app to Cordova app
+# Copy chrome app to cordova
 gulp.task 'build-cordova', ['build-chrome'], ->
-  exec "cca create #{cordova.base} --copy-from='#{chrome.base}'"
+  gulp.src "#{chrome.base}/**/*"
+    .pipe gulp.dest 'cordova/www'
+  # exec "cca create #{cordova.base} --copy-from='#{chrome.base}'"
+
+gulp.task 'dist-chrome', ['build-chrome'], ->
+  console.log 'TODO'
+  # exec "crx pack #{chrome.base} -f '#{build}/DataSpliceSeed.crx -p chromeapp.pem"
+
+gulp.task 'dist-android', ->
+  console.log 'TODO'
+
+gulp.task 'dist-ios', ->
+  console.log 'TODO'
 
 gulp.task 'test', ['coffee'], ->
   gulp.src "#{js}/test.js", read: false
@@ -197,11 +211,11 @@ do (serverOpts = ['build', 'webserver', 'livereload', 'watch']) ->
   gulp.task 'run-web', serverOpts
 
 gulp.task 'run-ios', ['build-cordova'], ->
-  process.chdir cordova.base
+  process.chdir cordova
   exec "cca run ios --emulator"
 
 gulp.task 'run-android', ['build-cordova'], ->
-  process.chdir cordova.base
+  process.chdir cordova
   exec "cca run android --emulator"
 
 gulp.task 'build', ['build-chrome', 'build-cordova', 'build-web', 'build-test']
