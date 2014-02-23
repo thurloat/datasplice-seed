@@ -17,6 +17,7 @@ uglify = require 'gulp-uglify'
 embedlr = require 'gulp-embedlr'
 refresh = require 'gulp-livereload'
 minifycss = require 'gulp-minify-css'
+exec = (require 'child_process').exec
 browserify = require 'gulp-browserify'
 server = do lr
 
@@ -42,8 +43,10 @@ vendorAssets = [
 app = fileset './app'
 build = './build'
 js = "#{build}/js"
-dist = fileset "#{build}/dist"
+web = fileset "#{build}/web"
 test = fileset "#{build}/test"
+chrome = fileset "#{build}/chrome"
+cordova = fileset "#{build}/cordova"
 port = 3000
 # allow to connect from anywhere
 hostname = null
@@ -60,8 +63,8 @@ gulp.task 'webserver', ->
     # Mount the mocha tests
     .use(connect.static path.resolve "#{test.base}")
     # Mount the app
-    .use(connect.static path.resolve "#{dist.base}")
-    .use(connect.directory path.resolve "#{dist.base}")
+    .use(connect.static path.resolve "#{web.base}")
+    .use(connect.directory path.resolve "#{web.base}")
   (http.createServer application).listen port, hostname
 
 gulp.task 'coffee', ->
@@ -72,7 +75,7 @@ gulp.task 'coffee', ->
 # Copies images to dest then reloads the page
 gulp.task 'images', ->
   gulp.src "#{app.images}/**/*"
-    .pipe gulp.dest "#{dist.images}"
+    .pipe gulp.dest "#{web.images}"
     .pipe refresh server
 
 gulp.task 'scripts', ['coffee'], ->
@@ -81,7 +84,7 @@ gulp.task 'scripts', ['coffee'], ->
     .on 'error', gutil.log
     .pipe rename 'index.js'
     .pipe if gutil.env.production then uglify() else gutil.noop()
-    .pipe gulp.dest "#{dist.src}"
+    .pipe gulp.dest "#{web.src}"
     .pipe refresh server
 
 gulp.task 'test-scripts', ['scripts'], ->
@@ -111,15 +114,15 @@ gulp.task 'styles', ->
   )
   .pipe rename 'index.css'
   .pipe if gutil.env.production then minifycss() else gutil.noop()
-  .pipe gulp.dest "#{dist.styles}"
+  .pipe gulp.dest "#{web.styles}"
   .pipe refresh server
 
-# Copy the HTML to dist
+# Copy the HTML to web
 gulp.task 'html', ->
   gulp.src "#{app.base}/index.html"
     # embeds the live reload script
     .pipe if gutil.env.production then gutil.noop() else embedlr port: lrPort
-    .pipe gulp.dest "#{dist.base}"
+    .pipe gulp.dest "#{web.base}"
     .pipe refresh server
 
 # Copy the HTML to mocha
@@ -146,17 +149,17 @@ gulp.task 'watch', ->
 # Opens the app in your browser
 gulp.task 'browse', ->
   options = url: "http://localhost:#{port}"
-  gulp.src "#{dist.base}/index.html"
+  gulp.src "#{web.base}/index.html"
     .pipe open '', options
 
 gulp.task 'clean', ->
   gulp.src "#{build}", read: false
     .pipe clean force: true
 
-gulp.task 'build-dist', ['build-vendor', 'html', 'images', 'styles', 'scripts']
+gulp.task 'build-web', ['build-vendor', 'html', 'images', 'styles', 'scripts']
 gulp.task 'build-test', ['test-html', 'test-styles', 'test-scripts']
 
-# Grabs assets from vendors and puts in build/dist/vendor
+# Grabs assets from vendors and puts in build/web/vendor
 # TODO: this doesn't seem very coffeescriptish
 gulp.task 'build-vendor', ->
   cyan = gutil.colors.cyan
@@ -166,12 +169,21 @@ gulp.task 'build-vendor', ->
       src = "#{vendor.base}/#{asset.src}"
       # some assets assume a particular path in the file structure
       dest = if asset.shared
-        "#{dist.base}/#{asset.dest}"
+        "#{web.base}/#{asset.dest}"
       else
-        "#{dist.base}/vendor/#{vendor.name}/#{asset.dest}"
+        "#{web.base}/vendor/#{vendor.name}/#{asset.dest}"
       gutil.log "\tCopying #{cyan src} to #{cyan dest}"
       gulp.src src
         .pipe gulp.dest dest
+
+# Copy the chromeapp manifests to build
+gulp.task 'build-chrome', ['build-web'], ->
+  gulp.src ["#{web.base}/**/*", 'chromeapp.js', 'manifest.json']
+    .pipe gulp.dest "#{chrome.base}"
+
+# Convert chrome app to Cordova app
+gulp.task 'build-cordova', ['build-chrome'], ->
+  exec "cca create #{cordova.base} --copy-from='#{chrome.base}'"
 
 gulp.task 'test', ['coffee'], ->
   gulp.src "#{js}/test.js", read: false
@@ -182,9 +194,17 @@ gulp.task 'test', ['coffee'], ->
 
 do (serverOpts = ['build', 'webserver', 'livereload', 'watch']) ->
   serverOpts.push 'browse' if gutil.env.open
-  gulp.task 'server', serverOpts
+  gulp.task 'run-web', serverOpts
 
-gulp.task 'build', ['build-dist', 'build-test']
+gulp.task 'run-ios', ['build-cordova'], ->
+  process.chdir cordova.base
+  exec "cca run ios --emulator"
+
+gulp.task 'run-android', ['build-cordova'], ->
+  process.chdir cordova.base
+  exec "cca run android --emulator"
+
+gulp.task 'build', ['build-chrome', 'build-cordova', 'build-web', 'build-test']
 
 # https://github.com/gulpjs/gulp/blob/master/docs/API.md#async-task-support
-gulp.task 'default', ['clean', 'build']
+gulp.task 'default', ['build']

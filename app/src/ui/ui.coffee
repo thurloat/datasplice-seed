@@ -28,7 +28,7 @@ do (
             gulp test                       # runs nyancat in the console
             gulp build  [--production]      # builds src and test code
                                             # [--production] flag minifies js/css files in build/dist
-            gulp server [--open] [--lrport] # starts dev server
+            gulp run-web [--open] [--lrport] # starts dev server
                                             # [--open] flag opens your browser automatically
                                             # [--lrport[ flag specifies live reload port (35729 by default)
             """
