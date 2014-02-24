@@ -180,14 +180,16 @@ gulp.task 'build-vendor', ->
 
 # Copy the chromeapp manifests to build
 gulp.task 'build-chrome', ['build-web'], ->
-  gulp.src ["#{web.base}/**/*", 'chromeapp.js', 'manifest.json']
+  gulp.src [
+    "#{web.base}/**/*"
+    'chromeapp.js'
+    'manifest.json'
+    'manifest.mobile.json'
+  ]
     .pipe gulp.dest "#{chrome.base}"
 
-# Copy chrome app to cordova
 gulp.task 'build-cordova', ['build-chrome'], ->
-  gulp.src "#{chrome.base}/**/*"
-    .pipe gulp.dest 'cordova/www'
-  # exec "cca create #{cordova.base} --copy-from='#{chrome.base}'"
+  exec "cca prepare"
 
 gulp.task 'dist-chrome', ['build-chrome'], ->
   console.log 'TODO'
@@ -208,15 +210,19 @@ gulp.task 'test', ['coffee'], ->
 
 do (serverOpts = ['build', 'webserver', 'livereload', 'watch']) ->
   serverOpts.push 'browse' if gutil.env.open
-  gulp.task 'run-web', serverOpts
+  gulp.task 'web', serverOpts
 
-gulp.task 'run-ios', ['build-cordova'], ->
+gulp.task 'ios', ['build-cordova'], ->
   process.chdir cordova
-  exec "cca run ios --emulator"
+  exec "cca run ios #{if gutil.env.emulator then '--emulator' else ''}"
 
-gulp.task 'run-android', ['build-cordova'], ->
+gulp.task 'android', ['build-cordova'], ->
+  cyan = gutil.colors.cyan
+  cmd = "cca run android #{if gutil.env.emulator then '--emulator' else ''}"
   process.chdir cordova
-  exec "cca run android --emulator"
+  gutil.log "\tSwitched to: #{cyan process.cwd()}"
+  gutil.log "\tRunning: #{cyan cmd}"
+  exec cmd
 
 gulp.task 'build', ['build-chrome', 'build-cordova', 'build-web', 'build-test']
 

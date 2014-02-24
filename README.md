@@ -22,7 +22,7 @@ DataSplice seed builds to:
 - `build/web` standard webapp
 - `build/test` mocha tests in the browser
 - `build/chrome` chrome app
-- `build/cordova` chrome app packaged as a cordova app
+- `cordova/www` is symlinked to `build/chrome`
 
 Build tasks:
 
@@ -42,9 +42,9 @@ Dist tasks __(TODO)__:
 Run tasks:
 
 - `gulp test` runs mocha tests in console
-- `gulp run-web` runs the web/test server on port 3000
-- `gulp run-ios` runs the ios emulator
-- `gulp run-android` runs the android emulator
+- `gulp web` runs the web/test server on port 3000
+- `gulp ios` `[--emulator]` runs the ios app
+- `gulp android` `[--emulator]` runs the android
 
 To run the chrome app go to chrome://extensions and load `build/chrome` as an unpacked extension:
 

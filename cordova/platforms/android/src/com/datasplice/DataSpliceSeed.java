@@ -17,7 +17,7 @@
        under the License.
  */
 
-package com.your.company.HelloWorld;
+package com.datasplice;
 
 import android.os.Bundle;
 import org.apache.cordova.*;

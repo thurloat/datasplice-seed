@@ -8,4 +8,31 @@ build
 .sass-cache
 .tmp
 bower_components
+
+###Android###
+
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# Local configuration file (sdk path, etc)
 local.properties
+
+###Cordova###
+
+cordova/platforms/**/.staging/
+cordova/platforms/**/www/
+
+# Android generated files
+cordova/platforms/android/assets
+cordova/platforms/android/bin/
+cordova/platforms/android/gen/
+cordova/platforms/android/ant-build/
+cordova/platforms/android/ant-gen/
+cordova/platforms/android/out

@@ -38,21 +38,21 @@
 		7E7966E61810823500FA85AD /* icon-small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E7966DC1810823500FA85AD /* icon-small.png */; };
 		7E7966E71810823500FA85AD /* icon-small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7E7966DD1810823500FA85AD /* icon-small@2x.png */; };
 		D4A0D8761607E02300AEF8BB /* Default-568h@2x~iphone.png in Resources */ = {isa = PBXBuildFile; fileRef = D4A0D8751607E02300AEF8BB /* Default-568h@2x~iphone.png */; };
-		FCA29B983A0A471491403FC9 /* CDVFile.m in Sources */ = {isa = PBXBuildFile; fileRef = DA1AEAA35ED24FFAA7BABAF1 /* CDVFile.m */; };
-		930BC71F465148EEA1BB8B4C /* CDVLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB84EE275AC4684AA5ACE04 /* CDVLocalFilesystem.m */; };
-		C6AAD836A18041C2A272BB3E /* CDVAssetLibraryFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = F759A42D5B4B490E8F0402DE /* CDVAssetLibraryFilesystem.m */; };
-		37E6755D468148BB84893F91 /* CDVInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 958CE46C44304C95A5FE0BC0 /* CDVInAppBrowser.m */; };
-		6E6477C801704FC29880575B /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 7844693CEE03459E98590505 /* CDVConnection.m */; };
-		AF0BE51BCC1F4CB2B5E51AA0 /* CDVReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = D0B93B5B3CE642A298A757AF /* CDVReachability.m */; };
-		513D2C6182AF4B39A59CA11B /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07800C84C9354977A98A4A6B /* SystemConfiguration.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		0E9038016E3248D1AEF7A3BC /* CDVKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = F8B59AE10FAD4BB7AE52B1B9 /* CDVKeyboard.m */; };
-		AD668F9384F2462C82603CD8 /* CDVStatusBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 93ABECE65E494F4998D38226 /* CDVStatusBar.m */; };
-		99099011E70542D38CDC5382 /* CCAOpenInChromeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1009B9E2799242F7A608BC2D /* CCAOpenInChromeController.m */; };
-		CEF04C3DDF814D6F964D27D1 /* ChromeNavigation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AF63BB8FC1340F3858D32D1 /* ChromeNavigation.m */; };
-		2187637DFA6A4086A6075435 /* ChromeStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = DD9BBAF5C0C54E10B6E5D190 /* ChromeStorage.m */; };
-		587DEAC4AB84419FA05C20F9 /* ChromeBootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = B7530389F29D43278DF50E5F /* ChromeBootstrap.m */; };
-		3D8F753066D149E7812F61F1 /* ChromeExtensionURLs.m in Sources */ = {isa = PBXBuildFile; fileRef = C4610C6FD02947B0882BBA07 /* ChromeExtensionURLs.m */; };
-		A23172F6C6254463B860BBEA /* ChromeI18n.m in Sources */ = {isa = PBXBuildFile; fileRef = 67F2B423C22045F29C77F949 /* ChromeI18n.m */; };
+		5153298718CB4F71B5F67F9C /* CDVFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 657C542615774E30A4762804 /* CDVFile.m */; };
+		D28106CB1A974BD0B57311D6 /* CDVLocalFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 20E904A97A5D41A1AD0BDA6E /* CDVLocalFilesystem.m */; };
+		6D84283A40564A7DA4E773F8 /* CDVAssetLibraryFilesystem.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DB9652A07DD4C6396EE052F /* CDVAssetLibraryFilesystem.m */; };
+		03CB4B68152249379ECFC124 /* CDVInAppBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 3077E2C2C0824036961AC69A /* CDVInAppBrowser.m */; };
+		6BFA3FFE81354852B221728E /* CDVConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 45592762A06543B9B84EA537 /* CDVConnection.m */; };
+		0F2DECF5EB79411AAC05904E /* CDVReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A144B53645A41BBB33434E2 /* CDVReachability.m */; };
+		0355DF0BD8CB41099999EDD5 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 787E055AE8074083809C5E14 /* SystemConfiguration.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		165B9CED93454B42A48646A8 /* CDVKeyboard.m in Sources */ = {isa = PBXBuildFile; fileRef = A25F34CD2C3E44F9AD981D13 /* CDVKeyboard.m */; };
+		7453B24B39FC484DBF9692AE /* CDVStatusBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 577F7544CA6643EE9CC6D892 /* CDVStatusBar.m */; };
+		32859C8BD39E4FB9BF2D4E7F /* CCAOpenInChromeController.m in Sources */ = {isa = PBXBuildFile; fileRef = 85D2FC2F4F414A1BB58EB882 /* CCAOpenInChromeController.m */; };
+		678809877FF54665BF53EB17 /* ChromeNavigation.m in Sources */ = {isa = PBXBuildFile; fileRef = 611B0574AB474BB2BB286519 /* ChromeNavigation.m */; };
+		BCA0112C54BB445B825CDACA /* ChromeStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = FAAC2B43E95F42F8967AC7E1 /* ChromeStorage.m */; };
+		C75EAEE763D64B2194C55285 /* ChromeBootstrap.m in Sources */ = {isa = PBXBuildFile; fileRef = 4A9CD45D2CF44FB4A0F525C6 /* ChromeBootstrap.m */; };
+		DE33FEB664DB482ABBBCAB93 /* ChromeExtensionURLs.m in Sources */ = {isa = PBXBuildFile; fileRef = D7D58F872A554C44B9A327C4 /* ChromeExtensionURLs.m */; };
+		88D15EB61153443EBA7C7898 /* ChromeI18n.m in Sources */ = {isa = PBXBuildFile; fileRef = F99F3BD5C18E4B4F85C90DED /* ChromeI18n.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -117,32 +117,32 @@
 		EB87FDF31871DA8E0020F90C /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = ../../www; sourceTree = "<group>"; };
 		EB87FDF41871DAF40020F90C /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = ../../config.xml; sourceTree = "<group>"; };
 		F840E1F0165FE0F500CFE078 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = config.xml; path = "DataSplice Seed/config.xml"; sourceTree = "<group>"; };
-		DA1AEAA35ED24FFAA7BABAF1 /* CDVFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVFile.m"; path = "org.apache.cordova.file/CDVFile.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		1AB84EE275AC4684AA5ACE04 /* CDVLocalFilesystem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVLocalFilesystem.m"; path = "org.apache.cordova.file/CDVLocalFilesystem.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		F759A42D5B4B490E8F0402DE /* CDVAssetLibraryFilesystem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVAssetLibraryFilesystem.m"; path = "org.apache.cordova.file/CDVAssetLibraryFilesystem.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		05D38D93F9974B3DA7CE40E1 /* CDVFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVFile.h"; path = "org.apache.cordova.file/CDVFile.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		93DD4A7268784B1289F7E151 /* CDVLocalFilesystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVLocalFilesystem.h"; path = "org.apache.cordova.file/CDVLocalFilesystem.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		14D37E84A438475487143B6F /* CDVAssetLibraryFilesystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVAssetLibraryFilesystem.h"; path = "org.apache.cordova.file/CDVAssetLibraryFilesystem.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		958CE46C44304C95A5FE0BC0 /* CDVInAppBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVInAppBrowser.m"; path = "org.apache.cordova.inappbrowser/CDVInAppBrowser.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		5896A44295474830BC427E0F /* CDVInAppBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVInAppBrowser.h"; path = "org.apache.cordova.inappbrowser/CDVInAppBrowser.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		7844693CEE03459E98590505 /* CDVConnection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVConnection.m"; path = "org.apache.cordova.network-information/CDVConnection.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		D0B93B5B3CE642A298A757AF /* CDVReachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVReachability.m"; path = "org.apache.cordova.network-information/CDVReachability.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		EA57476F280F4070AB62B5FC /* CDVConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVConnection.h"; path = "org.apache.cordova.network-information/CDVConnection.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		A4DD9FF2CF4148DB91799F40 /* CDVReachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVReachability.h"; path = "org.apache.cordova.network-information/CDVReachability.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		07800C84C9354977A98A4A6B /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "SystemConfiguration.framework"; path = "System/Library/Frameworks/SystemConfiguration.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
-		F8B59AE10FAD4BB7AE52B1B9 /* CDVKeyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVKeyboard.m"; path = "org.apache.cordova.keyboard/CDVKeyboard.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		7B3319A1D1494200B323ABD3 /* CDVKeyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVKeyboard.h"; path = "org.apache.cordova.keyboard/CDVKeyboard.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		93ABECE65E494F4998D38226 /* CDVStatusBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVStatusBar.m"; path = "org.apache.cordova.statusbar/CDVStatusBar.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		F0121B52CB5548B9901C9B3F /* CDVStatusBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVStatusBar.h"; path = "org.apache.cordova.statusbar/CDVStatusBar.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		1009B9E2799242F7A608BC2D /* CCAOpenInChromeController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CCAOpenInChromeController.m"; path = "org.chromium.navigation/CCAOpenInChromeController.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		2AF63BB8FC1340F3858D32D1 /* ChromeNavigation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "ChromeNavigation.m"; path = "org.chromium.navigation/ChromeNavigation.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		4A3C7192F38E4966B2927A87 /* CCAOpenInChromeController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CCAOpenInChromeController.h"; path = "org.chromium.navigation/CCAOpenInChromeController.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		DD9BBAF5C0C54E10B6E5D190 /* ChromeStorage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "ChromeStorage.m"; path = "org.chromium.storage/ChromeStorage.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		C7A0F50E559C4201A64901E9 /* ChromeStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "ChromeStorage.h"; path = "org.chromium.storage/ChromeStorage.h"; sourceTree = "<group>"; fileEncoding = 4; };
-		B7530389F29D43278DF50E5F /* ChromeBootstrap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "ChromeBootstrap.m"; path = "org.chromium.bootstrap/ChromeBootstrap.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		C4610C6FD02947B0882BBA07 /* ChromeExtensionURLs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "ChromeExtensionURLs.m"; path = "org.chromium.bootstrap/ChromeExtensionURLs.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		67F2B423C22045F29C77F949 /* ChromeI18n.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "ChromeI18n.m"; path = "org.chromium.i18n/ChromeI18n.m"; sourceTree = "<group>"; fileEncoding = 4; };
-		8F4536AAF11B4BF9BBFFFE3E /* ChromeI18n.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "ChromeI18n.h"; path = "org.chromium.i18n/ChromeI18n.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		657C542615774E30A4762804 /* CDVFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVFile.m"; path = "org.apache.cordova.file/CDVFile.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		20E904A97A5D41A1AD0BDA6E /* CDVLocalFilesystem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVLocalFilesystem.m"; path = "org.apache.cordova.file/CDVLocalFilesystem.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		1DB9652A07DD4C6396EE052F /* CDVAssetLibraryFilesystem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVAssetLibraryFilesystem.m"; path = "org.apache.cordova.file/CDVAssetLibraryFilesystem.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		472D3D01C1E244C6A73A9E44 /* CDVFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVFile.h"; path = "org.apache.cordova.file/CDVFile.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		5DF9C253A13542CB8C0B6F2B /* CDVLocalFilesystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVLocalFilesystem.h"; path = "org.apache.cordova.file/CDVLocalFilesystem.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		1F0E8C12D3BF46FAA8F81EA5 /* CDVAssetLibraryFilesystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVAssetLibraryFilesystem.h"; path = "org.apache.cordova.file/CDVAssetLibraryFilesystem.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		3077E2C2C0824036961AC69A /* CDVInAppBrowser.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVInAppBrowser.m"; path = "org.apache.cordova.inappbrowser/CDVInAppBrowser.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		4768401A35724BDA8D4AD04B /* CDVInAppBrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVInAppBrowser.h"; path = "org.apache.cordova.inappbrowser/CDVInAppBrowser.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		45592762A06543B9B84EA537 /* CDVConnection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVConnection.m"; path = "org.apache.cordova.network-information/CDVConnection.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		9A144B53645A41BBB33434E2 /* CDVReachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVReachability.m"; path = "org.apache.cordova.network-information/CDVReachability.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		DBB88319715542B1982B2B88 /* CDVConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVConnection.h"; path = "org.apache.cordova.network-information/CDVConnection.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		FAA4DB54C2B64C389155E80A /* CDVReachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVReachability.h"; path = "org.apache.cordova.network-information/CDVReachability.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		787E055AE8074083809C5E14 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "SystemConfiguration.framework"; path = "System/Library/Frameworks/SystemConfiguration.framework"; sourceTree = SDKROOT; fileEncoding = 4; };
+		A25F34CD2C3E44F9AD981D13 /* CDVKeyboard.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVKeyboard.m"; path = "org.apache.cordova.keyboard/CDVKeyboard.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		0E9A2967588841D3A02DF79A /* CDVKeyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVKeyboard.h"; path = "org.apache.cordova.keyboard/CDVKeyboard.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		577F7544CA6643EE9CC6D892 /* CDVStatusBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CDVStatusBar.m"; path = "org.apache.cordova.statusbar/CDVStatusBar.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		02A67BB627504575AA2FE030 /* CDVStatusBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CDVStatusBar.h"; path = "org.apache.cordova.statusbar/CDVStatusBar.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		85D2FC2F4F414A1BB58EB882 /* CCAOpenInChromeController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "CCAOpenInChromeController.m"; path = "org.chromium.navigation/CCAOpenInChromeController.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		611B0574AB474BB2BB286519 /* ChromeNavigation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "ChromeNavigation.m"; path = "org.chromium.navigation/ChromeNavigation.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		D36310D04429488B92A66CB6 /* CCAOpenInChromeController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CCAOpenInChromeController.h"; path = "org.chromium.navigation/CCAOpenInChromeController.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		FAAC2B43E95F42F8967AC7E1 /* ChromeStorage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "ChromeStorage.m"; path = "org.chromium.storage/ChromeStorage.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		41DEFAA602AE47DBBD6F173A /* ChromeStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "ChromeStorage.h"; path = "org.chromium.storage/ChromeStorage.h"; sourceTree = "<group>"; fileEncoding = 4; };
+		4A9CD45D2CF44FB4A0F525C6 /* ChromeBootstrap.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "ChromeBootstrap.m"; path = "org.chromium.bootstrap/ChromeBootstrap.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		D7D58F872A554C44B9A327C4 /* ChromeExtensionURLs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "ChromeExtensionURLs.m"; path = "org.chromium.bootstrap/ChromeExtensionURLs.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		F99F3BD5C18E4B4F85C90DED /* ChromeI18n.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "ChromeI18n.m"; path = "org.chromium.i18n/ChromeI18n.m"; sourceTree = "<group>"; fileEncoding = 4; };
+		8F771F2755BF4C5D8B29B9EE /* ChromeI18n.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "ChromeI18n.h"; path = "org.chromium.i18n/ChromeI18n.h"; sourceTree = "<group>"; fileEncoding = 4; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -155,7 +155,7 @@
 				288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
 				5AEE5B35173C68D80009041E /* CoreLocation.framework in Frameworks */,
-				513D2C6182AF4B39A59CA11B /* SystemConfiguration.framework in Frameworks */,
+				0355DF0BD8CB41099999EDD5 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,7 +249,7 @@
 				5B1594DC16A7569C00FEF299 /* AssetsLibrary.framework */,
 				288765FC0DF74451002DB57D /* CoreGraphics.framework */,
 				305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */,
-				07800C84C9354977A98A4A6B /* SystemConfiguration.framework */,
+				787E055AE8074083809C5E14 /* SystemConfiguration.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -265,31 +265,31 @@
 		307C750510C5A3420062BCA9 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
-				DA1AEAA35ED24FFAA7BABAF1 /* CDVFile.m */,
-				1AB84EE275AC4684AA5ACE04 /* CDVLocalFilesystem.m */,
-				F759A42D5B4B490E8F0402DE /* CDVAssetLibraryFilesystem.m */,
-				05D38D93F9974B3DA7CE40E1 /* CDVFile.h */,
-				93DD4A7268784B1289F7E151 /* CDVLocalFilesystem.h */,
-				14D37E84A438475487143B6F /* CDVAssetLibraryFilesystem.h */,
-				958CE46C44304C95A5FE0BC0 /* CDVInAppBrowser.m */,
-				5896A44295474830BC427E0F /* CDVInAppBrowser.h */,
-				7844693CEE03459E98590505 /* CDVConnection.m */,
-				D0B93B5B3CE642A298A757AF /* CDVReachability.m */,
-				EA57476F280F4070AB62B5FC /* CDVConnection.h */,
-				A4DD9FF2CF4148DB91799F40 /* CDVReachability.h */,
-				F8B59AE10FAD4BB7AE52B1B9 /* CDVKeyboard.m */,
-				7B3319A1D1494200B323ABD3 /* CDVKeyboard.h */,
-				93ABECE65E494F4998D38226 /* CDVStatusBar.m */,
-				F0121B52CB5548B9901C9B3F /* CDVStatusBar.h */,
-				1009B9E2799242F7A608BC2D /* CCAOpenInChromeController.m */,
-				2AF63BB8FC1340F3858D32D1 /* ChromeNavigation.m */,
-				4A3C7192F38E4966B2927A87 /* CCAOpenInChromeController.h */,
-				DD9BBAF5C0C54E10B6E5D190 /* ChromeStorage.m */,
-				C7A0F50E559C4201A64901E9 /* ChromeStorage.h */,
-				B7530389F29D43278DF50E5F /* ChromeBootstrap.m */,
-				C4610C6FD02947B0882BBA07 /* ChromeExtensionURLs.m */,
-				67F2B423C22045F29C77F949 /* ChromeI18n.m */,
-				8F4536AAF11B4BF9BBFFFE3E /* ChromeI18n.h */,
+				657C542615774E30A4762804 /* CDVFile.m */,
+				20E904A97A5D41A1AD0BDA6E /* CDVLocalFilesystem.m */,
+				1DB9652A07DD4C6396EE052F /* CDVAssetLibraryFilesystem.m */,
+				472D3D01C1E244C6A73A9E44 /* CDVFile.h */,
+				5DF9C253A13542CB8C0B6F2B /* CDVLocalFilesystem.h */,
+				1F0E8C12D3BF46FAA8F81EA5 /* CDVAssetLibraryFilesystem.h */,
+				3077E2C2C0824036961AC69A /* CDVInAppBrowser.m */,
+				4768401A35724BDA8D4AD04B /* CDVInAppBrowser.h */,
+				45592762A06543B9B84EA537 /* CDVConnection.m */,
+				9A144B53645A41BBB33434E2 /* CDVReachability.m */,
+				DBB88319715542B1982B2B88 /* CDVConnection.h */,
+				FAA4DB54C2B64C389155E80A /* CDVReachability.h */,
+				A25F34CD2C3E44F9AD981D13 /* CDVKeyboard.m */,
+				0E9A2967588841D3A02DF79A /* CDVKeyboard.h */,
+				577F7544CA6643EE9CC6D892 /* CDVStatusBar.m */,
+				02A67BB627504575AA2FE030 /* CDVStatusBar.h */,
+				85D2FC2F4F414A1BB58EB882 /* CCAOpenInChromeController.m */,
+				611B0574AB474BB2BB286519 /* ChromeNavigation.m */,
+				D36310D04429488B92A66CB6 /* CCAOpenInChromeController.h */,
+				FAAC2B43E95F42F8967AC7E1 /* ChromeStorage.m */,
+				41DEFAA602AE47DBBD6F173A /* ChromeStorage.h */,
+				4A9CD45D2CF44FB4A0F525C6 /* ChromeBootstrap.m */,
+				D7D58F872A554C44B9A327C4 /* ChromeExtensionURLs.m */,
+				F99F3BD5C18E4B4F85C90DED /* ChromeI18n.m */,
+				8F771F2755BF4C5D8B29B9EE /* ChromeI18n.h */,
 			);
 			name = Plugins;
 			path = "DataSplice Seed/Plugins";
@@ -484,20 +484,20 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
-				FCA29B983A0A471491403FC9 /* CDVFile.m in Sources */,
-				930BC71F465148EEA1BB8B4C /* CDVLocalFilesystem.m in Sources */,
-				C6AAD836A18041C2A272BB3E /* CDVAssetLibraryFilesystem.m in Sources */,
-				37E6755D468148BB84893F91 /* CDVInAppBrowser.m in Sources */,
-				6E6477C801704FC29880575B /* CDVConnection.m in Sources */,
-				AF0BE51BCC1F4CB2B5E51AA0 /* CDVReachability.m in Sources */,
-				0E9038016E3248D1AEF7A3BC /* CDVKeyboard.m in Sources */,
-				AD668F9384F2462C82603CD8 /* CDVStatusBar.m in Sources */,
-				99099011E70542D38CDC5382 /* CCAOpenInChromeController.m in Sources */,
-				CEF04C3DDF814D6F964D27D1 /* ChromeNavigation.m in Sources */,
-				2187637DFA6A4086A6075435 /* ChromeStorage.m in Sources */,
-				587DEAC4AB84419FA05C20F9 /* ChromeBootstrap.m in Sources */,
-				3D8F753066D149E7812F61F1 /* ChromeExtensionURLs.m in Sources */,
-				A23172F6C6254463B860BBEA /* ChromeI18n.m in Sources */,
+				5153298718CB4F71B5F67F9C /* CDVFile.m in Sources */,
+				D28106CB1A974BD0B57311D6 /* CDVLocalFilesystem.m in Sources */,
+				6D84283A40564A7DA4E773F8 /* CDVAssetLibraryFilesystem.m in Sources */,
+				03CB4B68152249379ECFC124 /* CDVInAppBrowser.m in Sources */,
+				6BFA3FFE81354852B221728E /* CDVConnection.m in Sources */,
+				0F2DECF5EB79411AAC05904E /* CDVReachability.m in Sources */,
+				165B9CED93454B42A48646A8 /* CDVKeyboard.m in Sources */,
+				7453B24B39FC484DBF9692AE /* CDVStatusBar.m in Sources */,
+				32859C8BD39E4FB9BF2D4E7F /* CCAOpenInChromeController.m in Sources */,
+				678809877FF54665BF53EB17 /* ChromeNavigation.m in Sources */,
+				BCA0112C54BB445B825CDACA /* ChromeStorage.m in Sources */,
+				C75EAEE763D64B2194C55285 /* ChromeBootstrap.m in Sources */,
+				DE33FEB664DB482ABBBCAB93 /* ChromeExtensionURLs.m in Sources */,
+				88D15EB61153443EBA7C7898 /* ChromeI18n.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
