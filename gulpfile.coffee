@@ -1,7 +1,9 @@
+fs = require 'fs'
 _ = require 'lodash'
 gulp = require 'gulp'
 http = require 'http'
 path = require 'path'
+When = require 'when'
 lr = require 'tiny-lr'
 open = require 'gulp-open'
 sass = require 'gulp-sass'
@@ -137,7 +139,7 @@ gulp.task 'test-html', ->
 
 gulp.task 'livereload', ->
   server.listen lrPort, (err) ->
-    console.log err if err
+    gutil.log err if err
 
 # Watches files for changes
 gulp.task 'watch', ->
@@ -155,7 +157,7 @@ gulp.task 'browse', ->
     .pipe open '', options
 
 gulp.task 'clean', ->
-  gulp.src ["#{build}", "#{cordova}/www/**/*"], read: false
+  gulp.src ["#{build}", "#{cordova}/platforms"], read: false
     .pipe clean force: true
 
 gulp.task 'build-web', ['build-vendor', 'html', 'images', 'styles', 'scripts']
@@ -179,7 +181,7 @@ gulp.task 'build-vendor', ->
         .pipe gulp.dest dest
 
 # Copy the chromeapp manifests to build
-gulp.task 'build-chrome', ['build-web'], ->
+gulp.task 'build-chrome', ['build-web'], (done) ->
   gulp.src [
     "#{web.base}/**/*"
     'chromeapp.js'
@@ -187,19 +189,49 @@ gulp.task 'build-chrome', ['build-web'], ->
     'manifest.mobile.json'
   ]
     .pipe gulp.dest "#{chrome.base}"
+  done()
 
 gulp.task 'build-cordova', ['build-chrome'], ->
-  exec "cca prepare"
+  magenta = gutil.colors.magenta
+
+  checkPresenseOf = (folder) ->
+    deferred = When.defer()
+    fs.exists folder, (exists) ->
+      deferred.resolve exists
+    deferred.promise
+
+  createPlatforms = ->
+    gutil.log 'Creating Cordova platforms...'
+    deferred = When.defer()
+    process.chdir cordova
+    fs.mkdir 'platforms', (err) ->
+      exec "cca platform add android"
+      gutil.log "\t#{magenta 'Created Android'}"
+      exec "cca platform add ios"
+      gutil.log "\t#{magenta 'Created iOS'}"
+      process.chdir '..'
+      deferred.resolve not err?
+    deferred.promise
+
+  When checkPresenseOf "#{cordova}/platforms"
+    .then (platformsExist) ->
+      createPlatforms() unless platformsExist
+    .done ->
+      process.chdir cordova
+      gutil.log "...Preparing Cordova platforms"
+      exec 'cca prepare'
+      process.chdir '..' # TODO: resolve path instead of relying on relative
+
 
 gulp.task 'dist-chrome', ['build-chrome'], ->
-  console.log 'TODO'
+  gutil.log 'TODO: build .crx'
   # exec "crx pack #{chrome.base} -f '#{build}/DataSpliceSeed.crx -p chromeapp.pem"
 
 gulp.task 'dist-android', ->
-  console.log 'TODO'
+  gutil.log 'TODO: build .apk'
 
 gulp.task 'dist-ios', ->
-  console.log 'TODO'
+  gutil.log 'TODO: build .ipa'
 
 gulp.task 'test', ['coffee'], ->
   gulp.src "#{js}/test.js", read: false

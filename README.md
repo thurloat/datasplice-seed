@@ -26,11 +26,11 @@ DataSplice seed builds to:
 
 Build tasks:
 
-- `gulp clean` deletes `./build` and `./cordova/www/**/*`
+- `gulp clean` deletes `./build` and `./cordova/platforms`
 - `gulp` builds everything
 - `gulp build-web` creates `./build/js`, `./build/web`, and `./build/test`
 - `gulp build-chrome` creates a chrome app in `./build/chrome`
-- `gulp build-cordova` copies to the chrome app to `./cordova/www`
+- `gulp build-cordova` creates platforms (if not exists) and performs cordova perpare
 
 Dist tasks __(TODO)__:
 
