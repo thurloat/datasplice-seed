@@ -33,6 +33,7 @@
     "coffee-script": "~1.7.1",
     "gulp-coffee": "~1.4.1",
     "cca": "0.0.5",
-    "ios-sim": "^1.8.2"
+    "ios-sim": "^1.8.2",
+    "execSync": "^1.0.1-pre"
   }
 }

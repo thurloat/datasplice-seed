@@ -32,12 +32,12 @@ Build tasks:
 - `gulp build-chrome` creates a chrome app in `./build/chrome`
 - `gulp build-cordova` creates platforms (if not exists) and performs cordova perpare
 
-Dist tasks __(TODO)__:
+Dist tasks:
 
-- `gulp dist-web` package webapp into `./dist/`
-- `gulp dist-chrome` package chrome `.crx` file into `./dist/`
-- `gulp dist-android` package `.apk` into `./dist/`
-- `gulp dist-ios` package ios file into `./dist/`
+- `gulp dist-web` package webapp into `./dist/web`
+- __(TODO)__ `gulp dist-chrome` package chrome `.crx` file into `./dist/chrome`
+- `gulp dist-android` package `.apk` into `./dist/android`
+- __(TODO)__ `gulp dist-ios` package ios file into `./dist/ios`
 
 Run tasks:
 
