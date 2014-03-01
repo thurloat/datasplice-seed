@@ -36,7 +36,7 @@ Dist tasks:
 
 - `gulp dist:web` package webapp into `./dist/web`
 - `gulp dist:chrome` `[--chrome=<path to chrome>]` package chrome `.crx` file into `./dist/chrome`
-- __(TODO)__ `gulp dist:android` package `.apk` into `./dist/android`
+- `gulp dist:android` package `.apk` into `./dist/android` __TODO:__ sign the apk
 - __(TODO)__ `gulp dist:ios` package ios file into `./dist/ios`
 
 Run tasks:

@@ -272,17 +272,14 @@ gulp.task 'dist:chrome', ['build:chrome'], (finishedTask) ->
       finishedTask()
 
 gulp.task 'dist:android', ['build:cordova'], (finishedTask) ->
-  gutil.log "\t#{blue 'TODO: build .apk'}"
-  # childProcess.exec './build --release', cwd: "#{cordovaPath}/platforms/android/cordova", (error, stdout, stderr) ->
-  #   gutil.log "#{green stdout}"
-  #   if error
-  #     gutil.log red 'dist:android failed:'
-  #     gutil.log red "\t#{stderr}"
-  #   else
-  #     gulp.src "#{cordovaPath}/platforms/android/ant-build/*.apk"
-  #       .pipe gulp.dest androidDistPath
-  #   finishedTask()
-  finishedTask()
+  childProcess.exec './build --release', cwd: "#{cordovaPath}/platforms/android/cordova", (error, stdout, stderr) ->
+    if error
+      gutil.log red 'dist:android failed:'
+      gutil.log red "\t#{stderr}"
+    else
+      gulp.src "#{cordovaPath}/platforms/android/ant-build/*.apk"
+        .pipe gulp.dest androidDistPath
+    finishedTask()
 
 gulp.task 'dist:ios', ['build:cordova'], ->
   gutil.log "\t#{blue 'TODO: build .ipa'}"
