@@ -169,22 +169,22 @@ gulp.task 'browse', ->
   gulp.src "#{webBuildPath}/index.html"
     .pipe open '', options
 
-gulp.task 'web:build', [
-  'vendor:build'
+gulp.task 'build:web', [
+  'build:vendor'
   'html'
   'images'
   'styles'
   'scripts'
 ]
 
-gulp.task 'test:build', [
+gulp.task 'build:test', [
   'test:html'
   'test:styles'
   'test:scripts'
 ]
 
 # Grabs assets from vendors and puts in build/web/vendor
-gulp.task 'vendor:build', ->
+gulp.task 'build:vendor', ->
   for vendor in vendorAssets
     gutil.log "Building vendor #{cyan vendor.name}"
     for asset in vendor.assets
@@ -199,7 +199,7 @@ gulp.task 'vendor:build', ->
         .pipe gulp.dest dest
 
 # Copy the chromeapp manifests to build
-gulp.task 'chrome:build', ['web:build'], ->
+gulp.task 'build:chrome', ['build:web'], ->
   gulp.src [
     "#{webBuildPath}/**/*"
     'chromeapp.js'
@@ -208,20 +208,20 @@ gulp.task 'chrome:build', ['web:build'], ->
   ]
     .pipe gulp.dest "#{chromeBuildPath}"
 
-gulp.task 'cordova:build', ['chrome:build'], (finishedTask) ->
+gulp.task 'build:cordova', ['build:chrome'], (finishedTask) ->
   gutil.log "Preparing #{cyan 'cordova'}..."
   childProcess.exec 'cca prepare', cwd: cordovaPath, (error, stdout, stderr) ->
     gutil.log "#{cyan stdout}"
     if error
-      gutil.log red 'cordova:build failed:'
+      gutil.log red 'build:cordova failed:'
       gutil.log red "\t#{stderr}"
     finishedTask()
 
-gulp.task 'web:dist', ['web:build'], ->
+gulp.task 'dist:web', ['build:web'], ->
   gulp.src "#{webBuildPath}/**/*"
     .pipe gulp.dest webDistPath
 
-gulp.task 'chrome:dist', ['chrome:build'], (finishedTask) ->
+gulp.task 'dist:chrome', ['build:chrome'], (finishedTask) ->
   # Allow a different chrome location to be passed on the command line
   chrome = gutil.env.chrome or defaultChromeLocation
   cmd = "'#{chrome}' --pack-extension=build/chrome --pack-extension-key=chromeapp.pem"
@@ -230,7 +230,7 @@ gulp.task 'chrome:dist', ['chrome:build'], (finishedTask) ->
     deferred = When.defer()
     childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
       if error
-        gutil.log red 'chrome:dist failed:'
+        gutil.log red 'dist:chrome failed:'
         gutil.log red "\t#{stderr}"
         deferred.reject()
       else
@@ -251,12 +251,12 @@ gulp.task 'chrome:dist', ['chrome:build'], (finishedTask) ->
       movePackage()
       finishedTask()
 
-gulp.task 'android:dist', ['cordova:build'], (finishedTask) ->
+gulp.task 'dist:android', ['build:cordova'], (finishedTask) ->
   gutil.log "\t#{blue 'TODO: build .apk'}"
   # childProcess.exec './build --release', cwd: "#{cordovaPath}/platforms/android/cordova", (error, stdout, stderr) ->
   #   gutil.log "#{green stdout}"
   #   if error
-  #     gutil.log red 'android:dist failed:'
+  #     gutil.log red 'dist:android failed:'
   #     gutil.log red "\t#{stderr}"
   #   else
   #     gulp.src "#{cordovaPath}/platforms/android/ant-build/*.apk"
@@ -264,14 +264,14 @@ gulp.task 'android:dist', ['cordova:build'], (finishedTask) ->
   #   finishedTask()
   finishedTask()
 
-gulp.task 'ios:dist', ['cordova:build'], ->
+gulp.task 'dist:ios', ['build:cordova'], ->
   gutil.log "\t#{blue 'TODO: build .ipa'}"
 
-do (serverOpts = ['web:build', 'webserver', 'livereload', 'watch']) ->
+do (serverOpts = ['build:web', 'webserver', 'livereload', 'watch']) ->
   serverOpts.push 'browse' if gutil.env.open
-  gulp.task 'web:run', serverOpts
+  gulp.task 'run:web', serverOpts
 
-gulp.task 'ios:run', ['cordova:build'], (finishedTask) ->
+gulp.task 'run:ios', ['build:cordova'], (finishedTask) ->
   cmd = "cca run ios #{if gutil.env.emulator then '--emulator' else ''}"
   childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
     gutil.log "blue stdout"
@@ -280,7 +280,7 @@ gulp.task 'ios:run', ['cordova:build'], (finishedTask) ->
       gutil.log red "\t#{stderr}"
     finishedTask()
 
-gulp.task 'android:run', ['cordova:build'], (finishedTask) ->
+gulp.task 'run:android', ['build:cordova'], (finishedTask) ->
   cmd = "cca run android #{if gutil.env.emulator then '--emulator' else ''}"
   childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
     gutil.log "green stdout"
@@ -289,7 +289,7 @@ gulp.task 'android:run', ['cordova:build'], (finishedTask) ->
       gutil.log red "\t#{stderr}"
     finishedTask()
 
-gulp.task 'chrome:run', ['chrome:dist'], (finishedTask) ->
+gulp.task 'run:chrome', ['dist:chrome'], (finishedTask) ->
   gutil.log "\t#{blue 'TODO'}"
   # # Allow a different chrome location to be passed on the command line
   # chrome = gutil.env.chrome or defaultChromeLocation
@@ -297,24 +297,24 @@ gulp.task 'chrome:run', ['chrome:dist'], (finishedTask) ->
   # gutil.log "Running #{blue cmd}"
   # childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
   #   if error
-  #     gutil.log red 'chrome:run failed:'
+  #     gutil.log red 'run:chrome failed:'
   #     gutil.log red "\t#{stderr}"
 
-gulp.task 'clean', ['clean:build']
+gulp.task 'clean', ['build:clean']
 
-gulp.task 'clean:all', ['clean:build', 'clean:dist']
+gulp.task 'clean:all', ['build:clean', 'dist:clean']
 
-gulp.task 'clean:build', ->
+gulp.task 'build:clean', ->
   gulp.src ["#{buildPath}"], read: false
     .pipe clean force: true
 
-gulp.task 'clean:dist', ->
+gulp.task 'dist:clean', ->
   gulp.src ["#{distPath}"], read: false
     .pipe clean force: true
 
-gulp.task 'test', ['test:run']
+gulp.task 'test', ['run:test']
 
-gulp.task 'test:run', ['coffee'], ->
+gulp.task 'run:test', ['coffee'], ->
   gulp.src "#{jsBuildPath}/test.js", read: false
     .pipe browserify browserifyOptions
     .on 'error', gutil.log
@@ -322,17 +322,17 @@ gulp.task 'test:run', ['coffee'], ->
     .on 'error', gutil.log
 
 gulp.task 'build', [
-  'web:build'
-  'test:build'
-  'chrome:build'
-  'cordova:build'
+  'build:web'
+  'build:test'
+  'build:chrome'
+  'build:cordova'
 ]
 
 gulp.task 'dist', [
-  'web:dist'
-  'chrome:dist'
-  'android:dist'
-  'ios:dist'
+  'dist:web'
+  'dist:chrome'
+  'dist:android'
+  'dist:ios'
 ]
 
 gulp.task 'default', ['build']
