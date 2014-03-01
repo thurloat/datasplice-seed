@@ -7,9 +7,6 @@
   "app": {
     "background": {
       "scripts": ["chromeapp.js"]
-    },
-    "launch": {
-      "local_path": "index.html"
     }
   },
   "icons": {

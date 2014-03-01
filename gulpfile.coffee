@@ -41,6 +41,7 @@ chromeBuildPath  = "#{buildPath}/chrome"
 
 webDistPath       = "#{distPath}/web"
 chromeDistPath    = "#{distPath}/chrome"
+chromePackageName = 'dataspliceseed.crx'
 androidDistPath   = "#{distPath}/android"
 iosDistPath       = "#{distPath}/ios"
 
@@ -63,6 +64,9 @@ hostname = null
 # change this to something unique if you want to run multiple projects
 # side-by-side
 lrPort = gutil.env.lrport or 35729
+
+# TODO:externalize this to a config file
+defaultChromeLocation = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
 
 browserifyOptions =
   debug: not gutil.env.production
@@ -205,9 +209,9 @@ gulp.task 'chrome:build', ['web:build'], ->
     .pipe gulp.dest "#{chromeBuildPath}"
 
 gulp.task 'cordova:build', ['chrome:build'], (finishedTask) ->
-  gutil.log "Preparing #{blue 'cordova'}..."
+  gutil.log "Preparing #{cyan 'cordova'}..."
   childProcess.exec 'cca prepare', cwd: cordovaPath, (error, stdout, stderr) ->
-    gutil.log "#{blue stdout}"
+    gutil.log "#{cyan stdout}"
     if error
       gutil.log red 'cordova:build failed:'
       gutil.log red "\t#{stderr}"
@@ -218,29 +222,50 @@ gulp.task 'web:dist', ['web:build'], ->
     .pipe gulp.dest webDistPath
 
 gulp.task 'chrome:dist', ['chrome:build'], (finishedTask) ->
-  gutil.log 'TODO'
-  # cmd = "crx pack #{chromeBuildPath} -f '#{distPath}/DataSpliceSeedChromeApp.crx -p chromeapp.pem"
-  # childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
-  #   gutil.log "#{blue stdout}"
+  # Allow a different chrome location to be passed on the command line
+  chrome = gutil.env.chrome or defaultChromeLocation
+  cmd = "'#{chrome}' --pack-extension=build/chrome --pack-extension-key=chromeapp.pem"
+
+  packageChrome = ->
+    deferred = When.defer()
+    childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
+      if error
+        gutil.log red 'chrome:dist failed:'
+        gutil.log red "\t#{stderr}"
+        deferred.reject()
+      else
+        deferred.resolve()
+    deferred.promise
+
+  movePackage = ->
+    src = "#{buildPath}/chrome.crx"
+    dest = "#{chromeDistPath}"
+    gulp.src src
+      .pipe clean force: true
+      .pipe rename chromePackageName
+      .pipe gulp.dest chromeDistPath
+    gutil.log "Packaged #{cyan chromeDistPath}/#{cyan chromePackageName}"
+
+  When packageChrome()
+    .done ->
+      movePackage()
+      finishedTask()
+
+gulp.task 'android:dist', ['cordova:build'], (finishedTask) ->
+  gutil.log "\t#{blue 'TODO: build .apk'}"
+  # childProcess.exec './build --release', cwd: "#{cordovaPath}/platforms/android/cordova", (error, stdout, stderr) ->
+  #   gutil.log "#{green stdout}"
   #   if error
-  #     gutil.log red 'chrome:dist failed:'
+  #     gutil.log red 'android:dist failed:'
   #     gutil.log red "\t#{stderr}"
+  #   else
+  #     gulp.src "#{cordovaPath}/platforms/android/ant-build/*.apk"
+  #       .pipe gulp.dest androidDistPath
   #   finishedTask()
   finishedTask()
 
-gulp.task 'android:dist', ['cordova:build'], (finishedTask) ->
-  childProcess.exec './build --release', cwd: "#{cordovaPath}/platforms/android/cordova", (error, stdout, stderr) ->
-    gutil.log "#{green stdout}"
-    if error
-      gutil.log red 'android:dist failed:'
-      gutil.log red "\t#{stderr}"
-    else
-      gulp.src "#{cordovaPath}/platforms/android/ant-build/*.apk"
-        .pipe gulp.dest androidDistPath
-    finishedTask()
-
 gulp.task 'ios:dist', ['cordova:build'], ->
-  gutil.log 'TODO: build .ipa'
+  gutil.log "\t#{blue 'TODO: build .ipa'}"
 
 do (serverOpts = ['web:build', 'webserver', 'livereload', 'watch']) ->
   serverOpts.push 'browse' if gutil.env.open
@@ -264,8 +289,27 @@ gulp.task 'android:run', ['cordova:build'], (finishedTask) ->
       gutil.log red "\t#{stderr}"
     finishedTask()
 
-gulp.task 'clean', ->
+gulp.task 'chrome:run', ['chrome:dist'], (finishedTask) ->
+  gutil.log "\t#{blue 'TODO'}"
+  # # Allow a different chrome location to be passed on the command line
+  # chrome = gutil.env.chrome or defaultChromeLocation
+  # cmd = "'#{chrome}' #{chromeDistPath}/#{chromePackageName}"
+  # gutil.log "Running #{blue cmd}"
+  # childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
+  #   if error
+  #     gutil.log red 'chrome:run failed:'
+  #     gutil.log red "\t#{stderr}"
+
+gulp.task 'clean', ['clean:build']
+
+gulp.task 'clean:all', ['clean:build', 'clean:dist']
+
+gulp.task 'clean:build', ->
   gulp.src ["#{buildPath}"], read: false
+    .pipe clean force: true
+
+gulp.task 'clean:dist', ->
+  gulp.src ["#{distPath}"], read: false
     .pipe clean force: true
 
 gulp.task 'test', ['test:run']

@@ -35,7 +35,7 @@ Build tasks:
 Dist tasks:
 
 - `gulp web:dist` package webapp into `./dist/web`
-- __(TODO)__ `gulp chrome:dist` package chrome `.crx` file into `./dist/chrome`
+- `gulp chrome:dist` package chrome `.crx` file into `./dist/chrome`
 - `gulp android:dist` package `.apk` into `./dist/android`
 - __(TODO)__ `gulp ios:dist` package ios file into `./dist/ios`
 

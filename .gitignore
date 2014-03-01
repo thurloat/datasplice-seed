@@ -31,3 +31,4 @@ cordova/platforms/android/ant-gen
 cordova/platforms/android/CordovaLib
 cordova/platforms/**/*.log
 cordova/platforms/**/www/**/*
+tmp/
