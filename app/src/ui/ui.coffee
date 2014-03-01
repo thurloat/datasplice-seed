@@ -23,20 +23,20 @@ do (
             'Main gulp tasks'
           pre {},
             """
-            gulp                            # defaults to [clean, build]
-            gulp clean                      # deletes build dir
-            gulp test                       # runs nyancat in the console
-            gulp build  [--production]      # builds src and test code
-                                            # [--production] flag minifies js/css files in build/dist
-            gulp dist                       # Builds distributions for Web/Chrome/Android/iOS
-            gulp web [--open] [--lrport]    # starts dev server
-                                            # [--open] flag opens your browser automatically
-                                            # [--lrport[ flag specifies live reload port (35729 by default)
+            gulp                             # defaults to [clean, build]
+            gulp clean                       # deletes build dir
+            gulp test                        # runs nyancat in the console
+            gulp build  [--production]       # builds src and test code
+                                             # [--production] flag minifies js/css files in build/dist
+            gulp dist                        # Builds distributions for Web/Chrome/Android/iOS
+            gulp web:run [--open] [--lrport] # starts dev server
+                                             # [--open] flag opens your browser automatically
+                                             # [--lrport[ flag specifies live reload port (35729 by default)
 
-            gulp ios [--emulator]           # Run as iOS app in connected device
-                                            # [--emulator] runs in emulator instead of connected device
-            gulp android [--emulator]       # Run as Android app in connected device
-                                            # [--emulator] runs in emulator instead of connected device
+            gulp ios:run [--emulator]        # Run as iOS app in connected device
+                                             # [--emulator] runs in emulator instead of connected device
+            gulp android:run [--emulator]    # Run as Android app in connected device
+                                             # [--emulator] runs in emulator instead of connected device
             """
 
   module.exports = UI
