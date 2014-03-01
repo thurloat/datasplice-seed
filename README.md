@@ -28,23 +28,23 @@ Build tasks:
 
 - `gulp clean` deletes `./build` and `./cordova/platforms`
 - `gulp` builds everything
-- `gulp web:build` creates `./build/js`, `./build/web`, and `./build/test`
-- `gulp chrome:build` creates a chrome app in `./build/chrome`
-- `gulp cordova:build` creates platforms (if not exists) and performs cordova perpare
+- `gulp build:web` creates `./build/js`, `./build/web`, and `./build/test`
+- `gulp build:chrome` creates a chrome app in `./build/chrome`
+- `gulp build:cordova` creates platforms (if not exists) and performs cordova perpare
 
 Dist tasks:
 
-- `gulp web:dist` package webapp into `./dist/web`
-- `gulp chrome:dist` package chrome `.crx` file into `./dist/chrome`
-- `gulp android:dist` package `.apk` into `./dist/android`
-- __(TODO)__ `gulp ios:dist` package ios file into `./dist/ios`
+- `gulp dist:web` package webapp into `./dist/web`
+- `gulp dist:chrome` package chrome `.crx` file into `./dist/chrome`
+- __(TODO)__ `gulp dist:android` package `.apk` into `./dist/android`
+- __(TODO)__ `gulp dist:ios` package ios file into `./dist/ios`
 
 Run tasks:
 
-- `gulp test:run` runs mocha tests in console
-- `gulp web:run` runs the web/test server on port 3000
-- `gulp ios:run` `[--emulator]` runs the ios app
-- `gulp android:run` `[--emulator]` runs the android
+- `gulp run:test` runs mocha tests in console
+- `gulp run:web` runs the web/test server on port 3000
+- `gulp run:ios` `[--emulator]` runs the ios app
+- `gulp run:android` `[--emulator]` runs the android
 
 To run the chrome app go to chrome://extensions and load `build/chrome` as an unpacked extension:
 
