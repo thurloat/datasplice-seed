@@ -169,6 +169,23 @@ gulp.task 'browse', ->
   gulp.src "#{webBuildPath}/index.html"
     .pipe open '', options
 
+gulp.task 'clean', ['clean:build', 'clean:dist']
+
+gulp.task 'clean:build', ->
+  gulp.src ["#{buildPath}"], read: false
+    .pipe clean force: true
+
+gulp.task 'clean:dist', ->
+  gulp.src ["#{distPath}"], read: false
+    .pipe clean force: true
+
+gulp.task 'build', [
+  'build:web'
+  'build:test'
+  'build:chrome'
+  'build:cordova'
+]
+
 gulp.task 'build:web', [
   'build:vendor'
   'html'
@@ -186,7 +203,6 @@ gulp.task 'build:test', [
 # Grabs assets from vendors and puts in build/web/vendor
 gulp.task 'build:vendor', ->
   for vendor in vendorAssets
-    gutil.log "Building vendor #{cyan vendor.name}"
     for asset in vendor.assets
       src = "#{vendor.base}/#{asset.src}"
       # some assets assume a particular path in the file structure
@@ -194,7 +210,6 @@ gulp.task 'build:vendor', ->
         "#{webBuildPath}/#{asset.dest}"
       else
         "#{webBuildPath}/vendor/#{vendor.name}/#{asset.dest}"
-      gutil.log "\tcopying #{cyan src} to #{cyan dest}"
       gulp.src src
         .pipe gulp.dest dest
 
@@ -209,13 +224,19 @@ gulp.task 'build:chrome', ['build:web'], ->
     .pipe gulp.dest "#{chromeBuildPath}"
 
 gulp.task 'build:cordova', ['build:chrome'], (finishedTask) ->
-  gutil.log "Preparing #{cyan 'cordova'}..."
-  childProcess.exec 'cca prepare', cwd: cordovaPath, (error, stdout, stderr) ->
-    gutil.log "#{cyan stdout}"
+  cmd = 'cca prepare'
+  childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
     if error
       gutil.log red 'build:cordova failed:'
       gutil.log red "\t#{stderr}"
     finishedTask()
+
+gulp.task 'dist', [
+  'dist:web'
+  'dist:chrome'
+  'dist:android'
+  'dist:ios'
+]
 
 gulp.task 'dist:web', ['build:web'], ->
   gulp.src "#{webBuildPath}/**/*"
@@ -244,7 +265,6 @@ gulp.task 'dist:chrome', ['build:chrome'], (finishedTask) ->
       .pipe clean force: true
       .pipe rename chromePackageName
       .pipe gulp.dest chromeDistPath
-    gutil.log "Packaged #{cyan chromeDistPath}/#{cyan chromePackageName}"
 
   When packageChrome()
     .done ->
@@ -274,7 +294,6 @@ do (serverOpts = ['build:web', 'webserver', 'livereload', 'watch']) ->
 gulp.task 'run:ios', ['build:cordova'], (finishedTask) ->
   cmd = "cca run ios #{if gutil.env.emulator then '--emulator' else ''}"
   childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
-    gutil.log "blue stdout"
     if error
       gutil.log red 'ios failed:'
       gutil.log red "\t#{stderr}"
@@ -283,7 +302,6 @@ gulp.task 'run:ios', ['build:cordova'], (finishedTask) ->
 gulp.task 'run:android', ['build:cordova'], (finishedTask) ->
   cmd = "cca run android #{if gutil.env.emulator then '--emulator' else ''}"
   childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
-    gutil.log "green stdout"
     if error
       gutil.log red 'android failed:'
       gutil.log red "\t#{stderr}"
@@ -300,18 +318,6 @@ gulp.task 'run:chrome', ['dist:chrome'], (finishedTask) ->
   #     gutil.log red 'run:chrome failed:'
   #     gutil.log red "\t#{stderr}"
 
-gulp.task 'clean', ['build:clean']
-
-gulp.task 'clean:all', ['build:clean', 'dist:clean']
-
-gulp.task 'build:clean', ->
-  gulp.src ["#{buildPath}"], read: false
-    .pipe clean force: true
-
-gulp.task 'dist:clean', ->
-  gulp.src ["#{distPath}"], read: false
-    .pipe clean force: true
-
 gulp.task 'test', ['run:test']
 
 gulp.task 'run:test', ['coffee'], ->
@@ -320,19 +326,5 @@ gulp.task 'run:test', ['coffee'], ->
     .on 'error', gutil.log
     .pipe mocha reporter: 'nyan'
     .on 'error', gutil.log
-
-gulp.task 'build', [
-  'build:web'
-  'build:test'
-  'build:chrome'
-  'build:cordova'
-]
-
-gulp.task 'dist', [
-  'dist:web'
-  'dist:chrome'
-  'dist:android'
-  'dist:ios'
-]
 
 gulp.task 'default', ['build']
