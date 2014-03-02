@@ -223,8 +223,8 @@ gulp.task 'build:chrome', ['build:web'], ->
   ]
     .pipe gulp.dest "#{chromeBuildPath}"
 
-gulp.task 'build:android', ['build-cordova']
-gulp.task 'build:ios', ['build-cordova']
+gulp.task 'build:android', ['build:cordova']
+gulp.task 'build:ios', ['build:cordova']
 gulp.task 'build:cordova', ['build:chrome'], (finishedTask) ->
   cmd = 'cca prepare'
   childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
