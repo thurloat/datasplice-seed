@@ -1,5 +1,8 @@
 DataSplice Seed
 ===
+
+[![Build Status](https://travis-ci.org/DataSplice/datasplice-seed.png?branch=master)](https://travis-ci.org/DataSplice/datasplice-seed)
+
 DataSplice Seed is a sample cross-platform web application that supports packaging as:
 
 - Standard webapp
