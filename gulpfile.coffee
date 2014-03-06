@@ -28,20 +28,20 @@ cyan = gutil.colors.cyan
 blue = gutil.colors.blue
 green = gutil.colors.green
 
-projectPath   = "#{path.resolve __dirname}"
-appPath       = "#{projectPath}/app"
-buildPath     = "#{projectPath}/build"
-distPath      = "#{projectPath}/dist"
-cordovaPath   = "#{projectPath}/cordova"
+projectPath = "#{path.resolve __dirname}"
+appPath     = "#{projectPath}/app"
+buildPath   = "#{projectPath}/build"
+distPath    = "#{projectPath}/dist"
 
-jsBuildPath      = "#{buildPath}/js"
-webBuildPath     = "#{buildPath}/web"
-testBuildPath    = "#{buildPath}/test"
-chromeBuildPath  = "#{buildPath}/chrome"
+cordovaPath     = "#{buildPath}/cordova"
+jsBuildPath     = "#{buildPath}/js"
+webBuildPath    = "#{buildPath}/web"
+testBuildPath   = "#{buildPath}/test"
+chromeBuildPath = "#{buildPath}/chrome"
 
 webDistPath       = "#{distPath}/web"
 chromeDistPath    = "#{distPath}/chrome"
-chromePackageName = 'dataspliceseed.crx'
+chromePackageName = 'datasplice-seed.crx'
 androidDistPath   = "#{distPath}/android"
 iosDistPath       = "#{distPath}/ios"
 
@@ -214,7 +214,7 @@ gulp.task 'build:vendor', ->
         .pipe gulp.dest dest
 
 # Copy the chromeapp manifests to build
-gulp.task 'build:chrome', ['build:web'], ->
+gulp.task 'build:chrome', ['build:web'], (finishedTask) ->
   gulp.src [
     "#{webBuildPath}/**/*"
     'chromeapp.js'
@@ -222,16 +222,40 @@ gulp.task 'build:chrome', ['build:web'], ->
     'manifest.mobile.json'
   ]
     .pipe gulp.dest "#{chromeBuildPath}"
+  finishedTask()
 
 gulp.task 'build:android', ['build:cordova']
 gulp.task 'build:ios', ['build:cordova']
+
 gulp.task 'build:cordova', ['build:chrome'], (finishedTask) ->
-  cmd = 'cca prepare'
-  childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
-    if error
-      gutil.log red 'build:cordova failed:'
-      gutil.log red "\t#{stderr}"
-    finishedTask()
+  createCordova = ->
+    deferred = When.defer()
+    cmd = 'cca create cordova --link-to=chrome'
+    childProcess.exec cmd, cwd: buildPath, (error, stdout, stderr) ->
+      gutil.log cyan stdout
+      if error
+        gutil.log red 'build:cordova: createCordova() failed'
+        gutil.log red "\t#{error}"
+        deferred.resolve error
+      else
+        deferred.resolve()
+    deferred.promise
+  prepareCordova = ->
+    deferred = When.defer()
+    cmd = 'cca prepare'
+    childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
+      gutil.log cyan stdout
+      if error
+        gutil.log red 'build:cordova: prepareCordova() failed'
+        gutil.log red "\t#{error}"
+        deferred.resolve error
+      else
+        deferred.resolve()
+    deferred.promise
+
+  When createCordova()
+    .then (error) -> prepareCordova() unless error?
+    .done -> finishedTask()
 
 gulp.task 'dist', [
   'dist:web'

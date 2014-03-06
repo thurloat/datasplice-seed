@@ -7,6 +7,7 @@ build/
 .idea/
 .sass-cache/
 .tmp/
+tmp/
 bower_components/
 
 ###Android###
@@ -25,10 +26,4 @@ bower_components/
 local.properties
 
 ###Cordova###
-cordova/platforms/android/.staging
-cordova/platforms/android/ant-build
-cordova/platforms/android/ant-gen
-cordova/platforms/android/CordovaLib
-cordova/platforms/**/*.log
-cordova/platforms/**/www/**/*
-tmp/
+cordova/
