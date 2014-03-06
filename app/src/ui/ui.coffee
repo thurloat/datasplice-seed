@@ -16,7 +16,7 @@ do (
             a href: 'test.html', className: 'btn btn-primary btn-lg', role: 'button',
               'Mocha Tests'
           p {},
-            'Change your git remote with'
+            'Change your git remote:'
           pre {},
             'git remote set-url origin https://github.com/DataSplice/<your-project>'
 
