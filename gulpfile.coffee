@@ -228,14 +228,19 @@ gulp.task 'build:android', ['build:cordova']
 gulp.task 'build:ios', ['build:cordova']
 
 gulp.task 'build:cordova', ['build:chrome'], (finishedTask) ->
+  # Path exists is harmless. Use this to avoid scary log output
+  pathExistsPattern = /Path already exists/g
   createCordova = ->
     deferred = When.defer()
     cmd = 'cca create cordova --link-to=chrome'
     childProcess.exec cmd, cwd: buildPath, (error, stdout, stderr) ->
       gutil.log cyan stdout
       if error
-        gutil.log red 'build:cordova: createCordova() failed'
-        gutil.log red "\t#{error}"
+        if error.toString().match pathExistsPattern
+          gutil.log cyan 'Cordova project already exists'
+        else
+          gutil.log red 'build:cordova: createCordova() failed'
+          gutil.log red "\t#{error}"
         deferred.resolve error
       else
         deferred.resolve()
@@ -246,8 +251,11 @@ gulp.task 'build:cordova', ['build:chrome'], (finishedTask) ->
     childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
       gutil.log cyan stdout
       if error
-        gutil.log red 'build:cordova: prepareCordova() failed'
-        gutil.log red "\t#{error}"
+        if error.toString().match pathExistsPattern
+          gutil.log cyan 'Cordova project already exists'
+        else
+          gutil.log red 'build:cordova: createCordova() failed'
+          gutil.log red "\t#{error}"
         deferred.resolve error
       else
         deferred.resolve()
