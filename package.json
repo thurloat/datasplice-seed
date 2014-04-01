@@ -10,7 +10,6 @@
   "devDependencies": {
     "gulp": "~3.5.0",
     "gulp-util": "~2.2.10",
-    "gulp-concat": "~2.1.7",
     "gulp-uglify": "~0.1.0",
     "gulp-minify-css": "~0.2.0",
     "gulp-rename": "~0.2.2",
@@ -34,7 +33,8 @@
     "gulp-coffee": "~1.4.1",
     "cca": "0.0.5",
     "ios-sim": "^1.8.2",
-    "execSync": "^1.0.1-pre"
+    "execSync": "^1.0.1-pre",
+    "gulp-plumber": "~0.5.6"
   },
   "scripts": {
     "test": "gulp test"

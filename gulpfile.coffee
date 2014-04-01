@@ -5,7 +5,7 @@ http = require 'http'
 path = require 'path'
 When = require 'when'
 lr = require 'tiny-lr'
-childProcess = (require 'child_process')
+childProcess = require 'child_process'
 open = require 'gulp-open'
 sass = require 'gulp-sass'
 connect = require 'connect'
@@ -14,13 +14,13 @@ gutil = require 'gulp-util'
 clean = require 'gulp-clean'
 mocha = require 'gulp-mocha'
 coffee = require 'gulp-coffee'
-concat = require 'gulp-concat'
 rename = require 'gulp-rename'
 uglify = require 'gulp-uglify'
 embedlr = require 'gulp-embedlr'
 refresh = require 'gulp-livereload'
 minifycss = require 'gulp-minify-css'
 browserify = require 'gulp-browserify'
+plumber = require 'gulp-plumber'
 server = do lr
 
 red = gutil.colors.red
@@ -86,6 +86,7 @@ gulp.task 'webserver', ->
 
 gulp.task 'coffee', ->
   gulp.src "#{appPath}/src/**/*.coffee"
+    .pipe plumber()
     .pipe coffee bare: true
     .pipe gulp.dest "#{jsBuildPath}"
 
@@ -112,8 +113,6 @@ gulp.task 'test:scripts', ['scripts'], ->
     .pipe gulp.dest "#{testBuildPath}/src"
     .pipe refresh server
 
-# Compiles Sass files into css file
-# and reloads the styles
 gulp.task 'test:styles', ->
   gulp.src "node_modules/mocha/mocha.css"
     .pipe gulp.dest "#{testBuildPath}/styles"
@@ -125,8 +124,7 @@ gulp.task 'styles', ->
   es.concat(
     gulp.src "#{appPath}/styles/index.scss"
       # TODO: should include pattern for styles from React components
-      .pipe sass includePaths: ['styles/includes']
-      .on 'error', gutil.log
+      .pipe sass errLogToConsole: true, includePaths: ['styles/includes']
     , gulp.src "bower_components/normalize-css/normalize.css"
   )
   .pipe rename 'index.css'
