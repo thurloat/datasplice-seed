@@ -1,9 +1,12 @@
 React = require 'react'
-Jumbotron = require './jumbotron/jumbotron'
+Versions = require './versions'
+Jumbotron = require './widgets/jumbotron'
 
 {div, span, img, h1, a, p, pre} = React.DOM
 
 UI = React.createClass
+  displayName: 'UI'
+
   render: ->
     div className: 'container',
       Jumbotron fullWidth: false,
@@ -17,5 +20,7 @@ UI = React.createClass
           'Change your git remote:'
         pre {},
           'git remote set-url origin https://github.com/DataSplice/<your-project>'
+
+        Versions {}
 
 module.exports = UI

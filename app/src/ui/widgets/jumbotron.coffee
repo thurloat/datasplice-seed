@@ -3,6 +3,7 @@ React = require 'react'
 {div} = React.DOM
 
 Jumbotron = React.createClass
+  displayName: 'Jumbotron'
 
   propTypes:
     fullWidth: React.PropTypes.bool
