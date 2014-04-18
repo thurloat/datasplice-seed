@@ -19,7 +19,7 @@ uglify = require 'gulp-uglify'
 embedlr = require 'gulp-embedlr'
 refresh = require 'gulp-livereload'
 minifycss = require 'gulp-minify-css'
-browserify = require 'gulp-browserify'
+webpack = require 'webpack'
 plumber = require 'gulp-plumber'
 server = do lr
 
@@ -65,8 +65,20 @@ lrPort = gutil.env.lrport or 35729
 # TODO:externalize this to a config file
 defaultChromeLocation = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
 
-browserifyOptions =
-  debug: not gutil.env.production
+webpackConfig =
+  cache: true
+  entry: "#{jsBuildPath}/index.js"
+  output:
+    path: "#{webBuildPath}/src"
+    filename: 'index.js'
+
+if gutil.env.production
+else
+  webpackConfig.devtool = 'sourcemap'
+  webpackConfig.debug = true
+
+# create a single webpack compiler to allow caching
+webpackCompiler = webpack webpackConfig
 
 # Starts the webserver
 gulp.task 'webserver', ->
@@ -93,22 +105,25 @@ gulp.task 'app:images', ->
     .pipe gulp.dest "#{webBuildPath}/images"
     .pipe refresh server
 
-gulp.task 'app:scripts', ['coffee'], ->
-  gulp.src "#{jsBuildPath}/index.js", read: false
-    .pipe browserify browserifyOptions
-    .on 'error', gutil.log
-    .pipe rename 'index.js'
-    .pipe if gutil.env.production then uglify() else gutil.noop()
-    .pipe gulp.dest "#{webBuildPath}/src"
-    .pipe refresh server
+gulp.task 'app:scripts', ['coffee'], (cb) ->
+  webpackCompiler.run (err, stats) ->
+    gutil.log '[app:scripts]', stats.toString colors: true
+    cb err
+  # gulp.src "#{jsBuildPath}/index.js", read: false
+  #   .pipe browserify browserifyOptions
+  #   .on 'error', gutil.log
+  #   .pipe rename 'index.js'
+  #   .pipe if gutil.env.production then uglify() else gutil.noop()
+  #   .pipe gulp.dest "#{webBuildPath}/src"
+  #   .pipe refresh server
 
 gulp.task 'test:scripts', ['app:scripts'], ->
   gulp.src "#{jsBuildPath}/test.js", read: false
-    .pipe browserify browserifyOptions
-    .on 'error', gutil.log
-    .pipe rename 'test.js'
-    .pipe gulp.dest "#{testBuildPath}/src"
-    .pipe refresh server
+    # .pipe browserify browserifyOptions
+    # .on 'error', gutil.log
+    # .pipe rename 'test.js'
+    # .pipe gulp.dest "#{testBuildPath}/src"
+    # .pipe refresh server
 
 gulp.task 'test:styles', ->
   gulp.src "node_modules/mocha/mocha.css"
@@ -348,9 +363,10 @@ gulp.task 'test', ['run:test']
 
 gulp.task 'run:test', ['coffee'], ->
   gulp.src "#{jsBuildPath}/test.js", read: false
-    .pipe browserify browserifyOptions
-    .on 'error', gutil.log
-    .pipe mocha reporter: 'nyan'
-    .on 'error', gutil.log
+    # .pipe browserify browserifyOptions
+    # .on 'error', gutil.log
+    # .pipe mocha reporter: 'nyan'
+    # .on 'error', gutil.log
 
 gulp.task 'default', ['build']
+
