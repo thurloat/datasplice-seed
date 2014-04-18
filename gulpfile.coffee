@@ -23,10 +23,7 @@ browserify = require 'gulp-browserify'
 plumber = require 'gulp-plumber'
 server = do lr
 
-red = gutil.colors.red
-cyan = gutil.colors.cyan
-blue = gutil.colors.blue
-green = gutil.colors.green
+{ red, cyan, blue, green } = gutil.colors
 
 projectPath = "#{path.resolve __dirname}"
 appPath     = "#{projectPath}/app"
@@ -91,12 +88,12 @@ gulp.task 'coffee', ->
     .pipe gulp.dest "#{jsBuildPath}"
 
 # Copies images to dest then reloads the page
-gulp.task 'images', ->
+gulp.task 'app:images', ->
   gulp.src "#{appPath}/images/**/*"
     .pipe gulp.dest "#{webBuildPath}/images"
     .pipe refresh server
 
-gulp.task 'scripts', ['coffee'], ->
+gulp.task 'app:scripts', ['coffee'], ->
   gulp.src "#{jsBuildPath}/index.js", read: false
     .pipe browserify browserifyOptions
     .on 'error', gutil.log
@@ -105,7 +102,7 @@ gulp.task 'scripts', ['coffee'], ->
     .pipe gulp.dest "#{webBuildPath}/src"
     .pipe refresh server
 
-gulp.task 'test:scripts', ['scripts'], ->
+gulp.task 'test:scripts', ['app:scripts'], ->
   gulp.src "#{jsBuildPath}/test.js", read: false
     .pipe browserify browserifyOptions
     .on 'error', gutil.log
@@ -120,7 +117,7 @@ gulp.task 'test:styles', ->
 
 # Compiles Sass files into css file
 # and reloads the styles
-gulp.task 'styles', ->
+gulp.task 'app:styles', ->
   es.concat(
     gulp.src "#{appPath}/styles/index.scss"
       # TODO: should include pattern for styles from React components
@@ -133,7 +130,7 @@ gulp.task 'styles', ->
   .pipe refresh server
 
 # Copy the HTML to web
-gulp.task 'html', ->
+gulp.task 'app:html', ->
   gulp.src "#{appPath}/index.html"
     # embeds the live reload script
     .pipe if gutil.env.production then gutil.noop() else embedlr port: lrPort
@@ -155,10 +152,10 @@ gulp.task 'livereload', ->
 # Watches files for changes
 gulp.task 'watch', ->
   gulp.watch "#{appPath}/images/**", ['images']
-  gulp.watch "#{appPath}/src/**", ['scripts', 'test:scripts']
-  gulp.watch "#{appPath}/src/**/*.scss", ['styles']
-  gulp.watch "#{appPath}/styles/**", ['styles']
-  gulp.watch "#{appPath}/index.html", ['html']
+  gulp.watch "#{appPath}/src/**", ['app:scripts', 'test:scripts']
+  gulp.watch "#{appPath}/src/**/*.scss", ['app:styles']
+  gulp.watch "#{appPath}/styles/**", ['app:styles']
+  gulp.watch "#{appPath}/index.html", ['app:html']
   gulp.watch "#{appPath}/test.html", ['test:html']
 
 # Opens the app in your browser
@@ -186,10 +183,10 @@ gulp.task 'build', [
 
 gulp.task 'build:web', [
   'build:vendor'
-  'html'
-  'images'
-  'styles'
-  'scripts'
+  'app:html'
+  'app:images'
+  'app:styles'
+  'app:scripts'
 ]
 
 gulp.task 'build:test', [
