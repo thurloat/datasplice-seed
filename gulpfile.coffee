@@ -67,10 +67,16 @@ defaultChromeLocation = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\
 
 webpackConfig =
   cache: true
-  entry: "#{jsBuildPath}/index.js"
+  entry:
+    shared: "#{jsBuildPath}/shared.js"
+    index: "#{jsBuildPath}/index.js"
   output:
     path: "#{webBuildPath}/src"
-    filename: 'index.js'
+    filename: '[name].js'
+  plugins: [ new webpack.optimize.CommonsChunkPlugin 'lib.js' ]
+  externals:
+    # ignore a warning from When.js
+    vertx: 'vertx'
 
 if gutil.env.production
 else
@@ -166,7 +172,7 @@ gulp.task 'livereload', ->
 
 # Watches files for changes
 gulp.task 'watch', ->
-  gulp.watch "#{appPath}/images/**", ['images']
+  gulp.watch "#{appPath}/images/**", ['app:images']
   gulp.watch "#{appPath}/src/**", ['app:scripts', 'test:scripts']
   gulp.watch "#{appPath}/src/**/*.scss", ['app:styles']
   gulp.watch "#{appPath}/styles/**", ['app:styles']
