@@ -73,7 +73,15 @@ webpackConfig =
   output:
     path: "#{webBuildPath}/src"
     filename: '[name].js'
-  plugins: [ new webpack.optimize.CommonsChunkPlugin 'lib.js' ]
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin 'lib.js'
+    # expose common libraries globally so they don't have to be required
+    new webpack.ProvidePlugin
+      React: 'react'
+      _: 'lodash'
+      async: 'async'
+      When: 'when'
+  ]
   externals:
     # ignore a warning from When.js
     vertx: 'vertx'

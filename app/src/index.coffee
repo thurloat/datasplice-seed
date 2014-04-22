@@ -1,4 +1,3 @@
-React = require 'react'
 UI = require './ui/ui'
 
 mountPoint = document.getElementById 'app'

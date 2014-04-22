@@ -1,4 +1,3 @@
-React = require 'react'
 Versions = require './versions'
 Jumbotron = require './widgets/jumbotron'
 

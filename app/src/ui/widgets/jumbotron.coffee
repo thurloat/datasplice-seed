@@ -1,5 +1,3 @@
-React = require 'react'
-
 {div} = React.DOM
 
 Jumbotron = React.createClass
