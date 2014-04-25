@@ -74,7 +74,7 @@ webpackConfig =
     path: "#{webBuildPath}/src"
     filename: '[name].js'
   plugins: [
-    new webpack.optimize.CommonsChunkPlugin 'lib.js'
+    new webpack.optimize.CommonsChunkPlugin 'lib.js', null, 2
     # expose common libraries globally so they don't have to be required
     new webpack.ProvidePlugin
       _: 'lodash'
