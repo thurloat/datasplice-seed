@@ -77,9 +77,9 @@ webpackConfig =
     new webpack.optimize.CommonsChunkPlugin 'lib.js'
     # expose common libraries globally so they don't have to be required
     new webpack.ProvidePlugin
-      React: 'react'
       _: 'lodash'
       async: 'async'
+      React: 'react'
       When: 'when'
   ]
   externals:

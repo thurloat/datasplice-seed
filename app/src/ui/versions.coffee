@@ -1,5 +1,9 @@
 { blockquote, h3, ul, li, a } = React.DOM
 
+# ensure we have references to shared libaries to consolidate them in the
+# common vendor script
+[ _, React, When, async ]
+
 Versions = React.createClass
   displayName: 'Versions'
 
