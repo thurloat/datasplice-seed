@@ -69,6 +69,7 @@ webpackConfig =
   entry:
     shared: "#{jsBuildPath}/shared.js"
     index: "#{jsBuildPath}/index.js"
+    test: "#{jsBuildPath}/test.js"
   output:
     path: "#{webBuildPath}/src"
     filename: '[name].js'
@@ -121,24 +122,18 @@ gulp.task 'app:images', ->
     .pipe gulp.dest "#{webBuildPath}/images"
     .pipe refresh server
 
-gulp.task 'app:scripts', ['coffee'], (cb) ->
+# webpack works best if we compile everything at once instead of splitting
+# into app and test script tasks
+gulp.task 'all:scripts', ['coffee'], (cb) ->
   webpackCompiler.run (err, stats) ->
-    gutil.log '[app:scripts]', stats.toString colors: true
+    gutil.log '[all:scripts]', stats.toString colors: true
 
     # trigger livereload manually
     server.changed
       body:
-        files: [ 'index.html' ]
+        files: [ 'index.html', 'test.html' ]
 
     cb err
-
-gulp.task 'test:scripts', ['app:scripts'], ->
-  gulp.src "#{jsBuildPath}/test.js", read: false
-    # .pipe browserify browserifyOptions
-    # .on 'error', gutil.log
-    # .pipe rename 'test.js'
-    # .pipe gulp.dest "#{testBuildPath}/src"
-    # .pipe refresh server
 
 gulp.task 'test:styles', ->
   gulp.src "node_modules/mocha/mocha.css"
@@ -182,7 +177,7 @@ gulp.task 'livereload', ->
 # Watches files for changes
 gulp.task 'watch', ->
   gulp.watch "#{appPath}/images/**", ['app:images']
-  gulp.watch "#{appPath}/src/**", ['app:scripts', 'test:scripts']
+  gulp.watch "#{appPath}/src/**", ['all:scripts']
   gulp.watch "#{appPath}/src/**/*.scss", ['app:styles']
   gulp.watch "#{appPath}/styles/**", ['app:styles']
   gulp.watch "#{appPath}/index.html", ['app:html']
@@ -216,13 +211,13 @@ gulp.task 'build:web', [
   'app:html'
   'app:images'
   'app:styles'
-  'app:scripts'
+  'all:scripts'
 ]
 
 gulp.task 'build:test', [
   'test:html'
   'test:styles'
-  'test:scripts'
+  'all:scripts'
 ]
 
 # Grabs assets from vendors and puts in build/web/vendor
@@ -343,9 +338,19 @@ gulp.task 'dist:android', ['build:cordova'], (finishedTask) ->
 gulp.task 'dist:ios', ['build:cordova'], ->
   gutil.log "\t#{blue 'TODO: build .ipa'}"
 
-do (serverOpts = ['build:web', 'webserver', 'livereload', 'watch']) ->
+do (serverOpts = [
+  'build:web'
+  'build:test'
+  'webserver'
+  'livereload'
+  'watch'
+]) ->
   serverOpts.push 'browse' if gutil.env.open
   gulp.task 'run:web', serverOpts
+
+gulp.task 'run:test', ['build:test'], ->
+  gulp.src "#{jsBuildPath}/test.js", read: false
+    .pipe mocha reporter: 'nyan'
 
 gulp.task 'run:ios', ['build:cordova'], (finishedTask) ->
   cmd = "cca run ios #{if gutil.env.emulator then '--emulator' else ''}"
@@ -373,15 +378,6 @@ gulp.task 'run:chrome', ['dist:chrome'], (finishedTask) ->
   #   if error
   #     gutil.log red 'run:chrome failed:'
   #     gutil.log red "\t#{stderr}"
-
-gulp.task 'test', ['run:test']
-
-gulp.task 'run:test', ['coffee'], ->
-  gulp.src "#{jsBuildPath}/test.js", read: false
-    # .pipe browserify browserifyOptions
-    # .on 'error', gutil.log
-    # .pipe mocha reporter: 'nyan'
-    # .on 'error', gutil.log
 
 gulp.task 'default', ['build']
 
