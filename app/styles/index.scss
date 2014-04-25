@@ -1,6 +1,8 @@
-
 @import "../../bower_components/bootstrap-sass/lib/bootstrap";
 @import "../../bower_components/bootstrap-sass/lib/theme";
+
 body {
   padding: 10px;
 }
+
+@import "../src/ui/widgets/jumbotron";

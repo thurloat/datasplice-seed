@@ -122,14 +122,13 @@ gulp.task 'app:images', ->
 gulp.task 'app:scripts', ['coffee'], (cb) ->
   webpackCompiler.run (err, stats) ->
     gutil.log '[app:scripts]', stats.toString colors: true
+
+    # trigger livereload manually
+    server.changed
+      body:
+        files: [ 'index.html' ]
+
     cb err
-  # gulp.src "#{jsBuildPath}/index.js", read: false
-  #   .pipe browserify browserifyOptions
-  #   .on 'error', gutil.log
-  #   .pipe rename 'index.js'
-  #   .pipe if gutil.env.production then uglify() else gutil.noop()
-  #   .pipe gulp.dest "#{webBuildPath}/src"
-  #   .pipe refresh server
 
 gulp.task 'test:scripts', ['app:scripts'], ->
   gulp.src "#{jsBuildPath}/test.js", read: false
