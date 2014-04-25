@@ -15,7 +15,6 @@ clean = require 'gulp-clean'
 mocha = require 'gulp-mocha'
 coffee = require 'gulp-coffee'
 rename = require 'gulp-rename'
-uglify = require 'gulp-uglify'
 embedlr = require 'gulp-embedlr'
 refresh = require 'gulp-livereload'
 minifycss = require 'gulp-minify-css'
@@ -87,6 +86,9 @@ webpackConfig =
     vertx: 'vertx'
 
 if gutil.env.production
+  # even though we have source maps, the uglify plug-in slows the build
+  # down considerable so only use it with production flag
+  webpackConfig.plugins.push new webpack.optimize.UglifyJsPlugin
 else
   webpackConfig.devtool = 'sourcemap'
   webpackConfig.debug = true
