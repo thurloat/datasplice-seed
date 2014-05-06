@@ -1,6 +1,6 @@
+gulp = require 'gulp'
 fs = require 'fs'
 _ = require 'lodash'
-gulp = require 'gulp'
 http = require 'http'
 path = require 'path'
 When = require 'when'
@@ -177,7 +177,7 @@ gulp.task 'livereload', ->
 # Watches files for changes
 gulp.task 'watch', ->
   gulp.watch "#{appPath}/images/**", ['app:images']
-  gulp.watch "#{appPath}/src/**", ['all:scripts']
+  gulp.watch "#{appPath}/src/**/*.coffee", ['all:scripts']
   gulp.watch "#{appPath}/src/**/*.scss", ['app:styles']
   gulp.watch "#{appPath}/styles/**", ['app:styles']
   gulp.watch "#{appPath}/index.html", ['app:html']
