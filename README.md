@@ -14,8 +14,7 @@ It is built with the following technologies:
 
 - App: [ReactJS](facebook.github.io/react/) / [SASS](sass-lang.com) / [When](https://github.com/cujojs/when)
 - Tests: [Mocha](visionmedia.github.io/mocha/) / [Chai](chaijs.com) / [SinonJS](http://sinonjs.org/)
-- Build: [GulpJS](gulpjs.com) / [Bower](bower.io) / [Browserify](browserify.org) / [Cordova](cordova.apache.org) / [MobileChromeApps](https://github.com/MobileChromeApps/mobile-chrome-apps)
- - Note: we'll likely move away from Browserify in favor of something like [Webpack](webpack.github.io)
+- Build: [GulpJS](gulpjs.com) / [Bower](bower.io) / [Webpack](webpack.github.io) / [Cordova](cordova.apache.org) / [MobileChromeApps](https://github.com/MobileChromeApps/mobile-chrome-apps)
 
 ### Build
 
