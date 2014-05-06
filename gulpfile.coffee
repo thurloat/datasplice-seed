@@ -1,6 +1,6 @@
+gulp = require 'gulp'
 fs = require 'fs'
 _ = require 'lodash'
-gulp = require 'gulp'
 http = require 'http'
 path = require 'path'
 When = require 'when'
@@ -15,18 +15,14 @@ clean = require 'gulp-clean'
 mocha = require 'gulp-mocha'
 coffee = require 'gulp-coffee'
 rename = require 'gulp-rename'
-uglify = require 'gulp-uglify'
 embedlr = require 'gulp-embedlr'
 refresh = require 'gulp-livereload'
 minifycss = require 'gulp-minify-css'
-browserify = require 'gulp-browserify'
+webpack = require 'webpack'
 plumber = require 'gulp-plumber'
 server = do lr
 
-red = gutil.colors.red
-cyan = gutil.colors.cyan
-blue = gutil.colors.blue
-green = gutil.colors.green
+{ red, cyan, blue, green } = gutil.colors
 
 projectPath = "#{path.resolve __dirname}"
 appPath     = "#{projectPath}/app"
@@ -68,8 +64,38 @@ lrPort = gutil.env.lrport or 35729
 # TODO:externalize this to a config file
 defaultChromeLocation = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
 
-browserifyOptions =
-  debug: not gutil.env.production
+webpackConfig =
+  cache: true
+  entry:
+    shared: "#{jsBuildPath}/shared.js"
+    index: "#{jsBuildPath}/index.js"
+    test: "#{jsBuildPath}/test.js"
+  output:
+    path: "#{webBuildPath}/src"
+    filename: '[name].js'
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin 'lib.js', null, 2
+    # expose common libraries globally so they don't have to be required
+    new webpack.ProvidePlugin
+      _: 'lodash'
+      async: 'async'
+      React: 'react'
+      When: 'when'
+  ]
+  externals:
+    # ignore a warning from When.js
+    vertx: 'vertx'
+
+if gutil.env.production
+  # even though we have source maps, the uglify plug-in slows the build
+  # down considerable so only use it with production flag
+  webpackConfig.plugins.push new webpack.optimize.UglifyJsPlugin
+else
+  webpackConfig.devtool = 'sourcemap'
+  webpackConfig.debug = true
+
+# create a single webpack compiler to allow caching
+webpackCompiler = webpack webpackConfig
 
 # Starts the webserver
 gulp.task 'webserver', ->
@@ -91,27 +117,23 @@ gulp.task 'coffee', ->
     .pipe gulp.dest "#{jsBuildPath}"
 
 # Copies images to dest then reloads the page
-gulp.task 'images', ->
+gulp.task 'app:images', ->
   gulp.src "#{appPath}/images/**/*"
     .pipe gulp.dest "#{webBuildPath}/images"
     .pipe refresh server
 
-gulp.task 'scripts', ['coffee'], ->
-  gulp.src "#{jsBuildPath}/index.js", read: false
-    .pipe browserify browserifyOptions
-    .on 'error', gutil.log
-    .pipe rename 'index.js'
-    .pipe if gutil.env.production then uglify() else gutil.noop()
-    .pipe gulp.dest "#{webBuildPath}/src"
-    .pipe refresh server
+# webpack works best if we compile everything at once instead of splitting
+# into app and test script tasks
+gulp.task 'all:scripts', ['coffee'], (cb) ->
+  webpackCompiler.run (err, stats) ->
+    gutil.log '[all:scripts]', stats.toString colors: true
 
-gulp.task 'test:scripts', ['scripts'], ->
-  gulp.src "#{jsBuildPath}/test.js", read: false
-    .pipe browserify browserifyOptions
-    .on 'error', gutil.log
-    .pipe rename 'test.js'
-    .pipe gulp.dest "#{testBuildPath}/src"
-    .pipe refresh server
+    # trigger livereload manually
+    server.changed
+      body:
+        files: [ 'index.html', 'test.html' ]
+
+    cb err
 
 gulp.task 'test:styles', ->
   gulp.src "node_modules/mocha/mocha.css"
@@ -120,7 +142,7 @@ gulp.task 'test:styles', ->
 
 # Compiles Sass files into css file
 # and reloads the styles
-gulp.task 'styles', ->
+gulp.task 'app:styles', ->
   es.concat(
     gulp.src "#{appPath}/styles/index.scss"
       # TODO: should include pattern for styles from React components
@@ -133,7 +155,7 @@ gulp.task 'styles', ->
   .pipe refresh server
 
 # Copy the HTML to web
-gulp.task 'html', ->
+gulp.task 'app:html', ->
   gulp.src "#{appPath}/index.html"
     # embeds the live reload script
     .pipe if gutil.env.production then gutil.noop() else embedlr port: lrPort
@@ -154,11 +176,11 @@ gulp.task 'livereload', ->
 
 # Watches files for changes
 gulp.task 'watch', ->
-  gulp.watch "#{appPath}/images/**", ['images']
-  gulp.watch "#{appPath}/src/**", ['scripts', 'test:scripts']
-  gulp.watch "#{appPath}/src/**/*.scss", ['styles']
-  gulp.watch "#{appPath}/styles/**", ['styles']
-  gulp.watch "#{appPath}/index.html", ['html']
+  gulp.watch "#{appPath}/images/**", ['app:images']
+  gulp.watch "#{appPath}/src/**/*.coffee", ['all:scripts']
+  gulp.watch "#{appPath}/src/**/*.scss", ['app:styles']
+  gulp.watch "#{appPath}/styles/**", ['app:styles']
+  gulp.watch "#{appPath}/index.html", ['app:html']
   gulp.watch "#{appPath}/test.html", ['test:html']
 
 # Opens the app in your browser
@@ -186,16 +208,16 @@ gulp.task 'build', [
 
 gulp.task 'build:web', [
   'build:vendor'
-  'html'
-  'images'
-  'styles'
-  'scripts'
+  'app:html'
+  'app:images'
+  'app:styles'
+  'all:scripts'
 ]
 
 gulp.task 'build:test', [
   'test:html'
   'test:styles'
-  'test:scripts'
+  'all:scripts'
 ]
 
 # Grabs assets from vendors and puts in build/web/vendor
@@ -316,9 +338,19 @@ gulp.task 'dist:android', ['build:cordova'], (finishedTask) ->
 gulp.task 'dist:ios', ['build:cordova'], ->
   gutil.log "\t#{blue 'TODO: build .ipa'}"
 
-do (serverOpts = ['build:web', 'webserver', 'livereload', 'watch']) ->
+do (serverOpts = [
+  'build:web'
+  'build:test'
+  'webserver'
+  'livereload'
+  'watch'
+]) ->
   serverOpts.push 'browse' if gutil.env.open
   gulp.task 'run:web', serverOpts
+
+gulp.task 'run:test', ['build:test'], ->
+  gulp.src "#{jsBuildPath}/test.js", read: false
+    .pipe mocha reporter: 'nyan'
 
 gulp.task 'run:ios', ['build:cordova'], (finishedTask) ->
   cmd = "cca run ios #{if gutil.env.emulator then '--emulator' else ''}"
@@ -347,13 +379,5 @@ gulp.task 'run:chrome', ['dist:chrome'], (finishedTask) ->
   #     gutil.log red 'run:chrome failed:'
   #     gutil.log red "\t#{stderr}"
 
-gulp.task 'test', ['run:test']
-
-gulp.task 'run:test', ['coffee'], ->
-  gulp.src "#{jsBuildPath}/test.js", read: false
-    .pipe browserify browserifyOptions
-    .on 'error', gutil.log
-    .pipe mocha reporter: 'nyan'
-    .on 'error', gutil.log
-
 gulp.task 'default', ['build']
+
