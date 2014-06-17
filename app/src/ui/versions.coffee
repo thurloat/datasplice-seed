@@ -2,7 +2,7 @@
 
 # ensure we have references to shared libaries to consolidate them in the
 # common vendor script
-[ _, React, When, async ]
+[ _, React, async ]
 
 Versions = React.createClass
   displayName: 'Versions'
@@ -20,8 +20,6 @@ Versions = React.createClass
           " [#{React.version}]"
         li {},
           a href: 'https://github.com/caolan/async/', 'Async.js'
-        li {},
-          a href: 'https://github.com/cujojs/when', 'when.js'
 
 module.exports = Versions
 

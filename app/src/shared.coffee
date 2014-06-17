@@ -3,5 +3,4 @@
 require 'async'
 require 'lodash'
 require 'react'
-require 'when'
 

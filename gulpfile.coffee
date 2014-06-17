@@ -3,7 +3,6 @@ fs = require 'fs'
 _ = require 'lodash'
 http = require 'http'
 path = require 'path'
-When = require 'when'
 lr = require 'tiny-lr'
 childProcess = require 'child_process'
 open = require 'gulp-open'
@@ -80,11 +79,7 @@ webpackConfig =
       _: 'lodash'
       async: 'async'
       React: 'react'
-      When: 'when'
   ]
-  externals:
-    # ignore a warning from When.js
-    vertx: 'vertx'
 
 if gutil.env.production
   # even though we have source maps, the uglify plug-in slows the build
@@ -251,39 +246,41 @@ gulp.task 'build:cordova', ['build:chrome'], (finishedTask) ->
   # Path exists is harmless. Use this to avoid scary log output
   pathExistsPattern = /Path already exists/g
   createCordova = ->
-    deferred = When.defer()
-    cmd = 'cca create cordova --link-to=chrome'
-    childProcess.exec cmd, cwd: buildPath, (error, stdout, stderr) ->
-      gutil.log cyan stdout
-      if error
-        if error.toString().match pathExistsPattern
-          gutil.log cyan 'Cordova project already exists'
+    new Promise (resolve, reject) ->
+      cmd = 'cca create cordova --link-to=chrome'
+      childProcess.exec cmd, cwd: buildPath, (error, stdout, stderr) ->
+        gutil.log cyan stdout
+        if error
+          if error.toString().match pathExistsPattern
+            gutil.log cyan 'Cordova project already exists'
+          else
+            gutil.log red 'build:cordova: createCordova() failed'
+            gutil.log red "\t#{error}"
+          resolve error
         else
-          gutil.log red 'build:cordova: createCordova() failed'
-          gutil.log red "\t#{error}"
-        deferred.resolve error
-      else
-        deferred.resolve()
-    deferred.promise
+          resolve()
   prepareCordova = ->
-    deferred = When.defer()
-    cmd = 'cca prepare'
-    childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
-      gutil.log cyan stdout
-      if error
-        if error.toString().match pathExistsPattern
-          gutil.log cyan 'Cordova project already exists'
+    new Promise (resolve, reject) ->
+      cmd = 'cca prepare'
+      childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
+        gutil.log cyan stdout
+        if error
+          if error.toString().match pathExistsPattern
+            gutil.log cyan 'Cordova project already exists'
+          else
+            gutil.log red 'build:cordova: createCordova() failed'
+            gutil.log red "\t#{error}"
+          resolve error
         else
-          gutil.log red 'build:cordova: createCordova() failed'
-          gutil.log red "\t#{error}"
-        deferred.resolve error
-      else
-        deferred.resolve()
-    deferred.promise
+          resolve()
 
-  When createCordova()
+  (Promise.resolve createCordova())
     .then (error) -> prepareCordova() unless error?
-    .done -> finishedTask()
+    .then (error) ->
+      if error
+        throw error
+      else
+        finishedTask()
 
 gulp.task 'dist', [
   'dist:web'
@@ -302,15 +299,14 @@ gulp.task 'dist:chrome', ['build:chrome'], (finishedTask) ->
   cmd = "'#{chrome}' --pack-extension=build/chrome --pack-extension-key=chromeapp.pem"
 
   packageChrome = ->
-    deferred = When.defer()
-    childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
-      if error
-        gutil.log red 'dist:chrome failed:'
-        gutil.log red "\t#{stderr}"
-        deferred.reject()
-      else
-        deferred.resolve()
-    deferred.promise
+    new Promise (resolve, reject) ->
+      childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
+        if error
+          gutil.log red 'dist:chrome failed:'
+          gutil.log red "\t#{stderr}"
+          reject()
+        else
+          resolve()
 
   movePackage = ->
     src = "#{buildPath}/chrome.crx"
@@ -320,7 +316,7 @@ gulp.task 'dist:chrome', ['build:chrome'], (finishedTask) ->
       .pipe rename chromePackageName
       .pipe gulp.dest chromeDistPath
 
-  When packageChrome()
+  (Promise.resolve packageChrome())
     .done ->
       movePackage()
       finishedTask()
