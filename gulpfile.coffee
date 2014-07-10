@@ -1,3 +1,4 @@
+{Promise} = require 'es6-promise'
 gulp = require 'gulp'
 fs = require 'fs'
 _ = require 'lodash'
@@ -10,7 +11,7 @@ sass = require 'gulp-sass'
 connect = require 'connect'
 es = require 'event-stream'
 gutil = require 'gulp-util'
-clean = require 'gulp-clean'
+clean = require 'gulp-rimraf'
 mocha = require 'gulp-mocha'
 coffee = require 'gulp-coffee'
 rename = require 'gulp-rename'
@@ -306,6 +307,7 @@ gulp.task 'dist:chrome', ['build:chrome'], (finishedTask) ->
           gutil.log red "\t#{stderr}"
           reject()
         else
+          gutil.log "Executed #{cmd}"
           resolve()
 
   movePackage = ->
@@ -314,12 +316,14 @@ gulp.task 'dist:chrome', ['build:chrome'], (finishedTask) ->
     gulp.src src
       .pipe clean force: true
       .pipe rename chromePackageName
-      .pipe gulp.dest chromeDistPath
+      .pipe gulp.dest dest
+      .on 'end', done
 
-  (Promise.resolve packageChrome())
-    .done ->
-      movePackage()
-      finishedTask()
+  done = ->
+    console.log 'Calling callback just once'
+    finishedTask()
+
+  packageChrome().then movePackage
 
 gulp.task 'dist:android', ['build:cordova'], (finishedTask) ->
   childProcess.exec './build --release', cwd: "#{cordovaPath}/platforms/android/cordova", (error, stdout, stderr) ->

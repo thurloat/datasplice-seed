@@ -1,3 +1,4 @@
+require './environment'
 UI = require './ui/ui'
 
 mountPoint = document.getElementById 'app'
