@@ -12,7 +12,7 @@ webpack       = require 'webpack'
 
 { Promise } = require 'es6-promise'
 
-{ red, cyan, blue, green } = $.util.colors
+{ red, cyan, blue, green, magenta } = $.util.colors
 
 projectPath = "#{path.resolve __dirname}"
 appPath     = "#{projectPath}/app"
@@ -38,9 +38,9 @@ vendorAssets = [
   {
     name: 'glyphicons'
     base: './bower_components/bootstrap-sass/fonts'
-    assets: [
-      { src: '*.*', dest: 'fonts', shared: true }
-    ]
+    dest: "#{webBuildPath}/fonts"
+    shared: true
+    assets: [ '*.*' ]
   }
 ]
 
@@ -211,16 +211,43 @@ gulp.task 'build:test', [
 
 # Grabs assets from vendors and puts in build/web/vendor
 gulp.task 'build:vendor', ->
+  globalVendors = []
   for vendor in vendorAssets
+    $.util.log cyan vendor.name
+
+    # a little validation
+    if (not vendor.dest? and not vendor.global) or
+      (vendor.dest? and vendor.global)
+        $.util.log red "#{vendor.name} error - you can have dest or global \
+        but not both"
+        return false
+
+    # process each asset
     for asset in vendor.assets
-      src = "#{vendor.base}/#{asset.src}"
-      # some assets assume a particular path in the file structure
-      dest = if asset.shared
-        "#{webBuildPath}/#{asset.dest}"
+      dest = "#{vendor.dest}/vendor/#{vendor.name}"
+
+      if _.isString asset
+        asset = src: "#{vendor.base}/#{asset}", dest: dest
+      else if _.isObject asset
+        asset.src = "#{vendor.base}/#{asset.src}"
+        asset.dest = "#{dest}/#{if asset.dest? then asset.dest else ''}"
+
+      if vendor.global or asset.global
+        globalVendors.push asset.src
+        $.util.log "\t#{asset.src} -> " +
+          (magenta "#{globalVendorsPath}/#{globalVendorsFileName}")
       else
-        "#{webBuildPath}/vendor/#{vendor.name}/#{asset.dest}"
-      gulp.src src
-        .pipe gulp.dest dest
+        asset.dest = vendor.dest if vendor.shared
+        (gulp.src asset.src).pipe gulp.dest asset.dest
+        $.util.log "\t#{asset.src} -> " + magenta "#{asset.dest}"
+
+  # concat files to script if eligible
+  # minify concatenated file if necessary
+  if globalVendors.length > 0
+    gulp.src globalVendors
+      .pipe $.concat globalVendorsFileName
+      .pipe if $.util.env.production then $.uglify() else $.util.noop()
+      .pipe gulp.dest globalVendorsPath
 
 # Copy the chromeapp manifests to build
 gulp.task 'build:chrome', ['build:web'], (finishedTask) ->
