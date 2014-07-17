@@ -1,11 +1,11 @@
-gulp = require 'gulp'
 fs = require 'fs'
 _ = require 'lodash'
 http = require 'http'
 path = require 'path'
-When = require 'when'
 lr = require 'tiny-lr'
 childProcess = require 'child_process'
+{ Promise } = require 'es6-promise'
+gulp = require 'gulp'
 open = require 'gulp-open'
 sass = require 'gulp-sass'
 connect = require 'connect'
@@ -80,11 +80,7 @@ webpackConfig =
       _: 'lodash'
       async: 'async'
       React: 'react'
-      When: 'when'
   ]
-  externals:
-    # ignore a warning from When.js
-    vertx: 'vertx'
 
 if gutil.env.production
   # even though we have source maps, the uglify plug-in slows the build
@@ -247,43 +243,41 @@ gulp.task 'build:chrome', ['build:web'], (finishedTask) ->
 gulp.task 'build:android', ['build:cordova']
 gulp.task 'build:ios', ['build:cordova']
 
-gulp.task 'build:cordova', ['build:chrome'], (finishedTask) ->
+gulp.task 'build:cordova', ['build:chrome'], ->
   # Path exists is harmless. Use this to avoid scary log output
   pathExistsPattern = /Path already exists/g
   createCordova = ->
-    deferred = When.defer()
-    cmd = 'cca create cordova --link-to=chrome'
-    childProcess.exec cmd, cwd: buildPath, (error, stdout, stderr) ->
-      gutil.log cyan stdout
-      if error
-        if error.toString().match pathExistsPattern
-          gutil.log cyan 'Cordova project already exists'
+    new Promise (resolve, reject) ->
+      cmd = 'cca create cordova --link-to=chrome'
+      childProcess.exec cmd, cwd: buildPath, (error, stdout, stderr) ->
+        gutil.log cyan stdout
+        if error
+          if error.toString().match pathExistsPattern
+            gutil.log cyan 'Cordova project already exists'
+            resolve()
+          else
+            gutil.log red 'build:cordova: createCordova() failed'
+            gutil.log red "\t#{error}"
+            reject error
         else
-          gutil.log red 'build:cordova: createCordova() failed'
-          gutil.log red "\t#{error}"
-        deferred.resolve error
-      else
-        deferred.resolve()
-    deferred.promise
+          resolve()
   prepareCordova = ->
-    deferred = When.defer()
-    cmd = 'cca prepare'
-    childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
-      gutil.log cyan stdout
-      if error
-        if error.toString().match pathExistsPattern
-          gutil.log cyan 'Cordova project already exists'
+    new Promise (resolve, reject) ->
+      cmd = 'cca prepare'
+      childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
+        gutil.log cyan stdout
+        if error
+          if error.toString().match pathExistsPattern
+            gutil.log cyan 'Cordova project already exists'
+            resolve()
+          else
+            gutil.log red 'build:cordova: createCordova() failed'
+            gutil.log red "\t#{error}"
+            reject error
         else
-          gutil.log red 'build:cordova: createCordova() failed'
-          gutil.log red "\t#{error}"
-        deferred.resolve error
-      else
-        deferred.resolve()
-    deferred.promise
+          resolve()
 
-  When createCordova()
-    .then (error) -> prepareCordova() unless error?
-    .done -> finishedTask()
+  createCordova().then prepareCordova
 
 gulp.task 'dist', [
   'dist:web'
@@ -296,34 +290,32 @@ gulp.task 'dist:web', ['build:web'], ->
   gulp.src "#{webBuildPath}/**/*"
     .pipe gulp.dest webDistPath
 
-gulp.task 'dist:chrome', ['build:chrome'], (finishedTask) ->
+gulp.task 'dist:chrome', ['build:chrome'], ->
   # Allow a different chrome location to be passed on the command line
   chrome = gutil.env.chrome or defaultChromeLocation
   cmd = "'#{chrome}' --pack-extension=build/chrome --pack-extension-key=chromeapp.pem"
 
   packageChrome = ->
-    deferred = When.defer()
-    childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
-      if error
-        gutil.log red 'dist:chrome failed:'
-        gutil.log red "\t#{stderr}"
-        deferred.reject()
-      else
-        deferred.resolve()
-    deferred.promise
+    new Promise (resolve, reject) ->
+      childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
+        if error
+          gutil.log red 'dist:chrome failed:'
+          gutil.log red "\t#{stderr}"
+          reject()
+        else
+          resolve()
 
   movePackage = ->
-    src = "#{buildPath}/chrome.crx"
-    dest = "#{chromeDistPath}"
-    gulp.src src
-      .pipe clean force: true
-      .pipe rename chromePackageName
-      .pipe gulp.dest chromeDistPath
+    new Promise (resolve, reject) ->
+      src = "#{buildPath}/chrome.crx"
+      dest = "#{chromeDistPath}"
+      gulp.src src
+        .pipe clean force: true
+        .pipe rename chromePackageName
+        .pipe gulp.dest chromeDistPath
+        .on 'end', resolve
 
-  When packageChrome()
-    .done ->
-      movePackage()
-      finishedTask()
+  packageChrome().then movePackage
 
 gulp.task 'dist:android', ['build:cordova'], (finishedTask) ->
   childProcess.exec './build --release', cwd: "#{cordovaPath}/platforms/android/cordova", (error, stdout, stderr) ->
