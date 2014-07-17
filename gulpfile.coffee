@@ -1,30 +1,18 @@
-{Promise} = require 'es6-promise'
-gulp = require 'gulp'
-fs = require 'fs'
-_ = require 'lodash'
-http = require 'http'
-path = require 'path'
-lr = require 'tiny-lr'
-childProcess = require 'child_process'
-{ Promise } = require 'es6-promise'
-gulp = require 'gulp'
-open = require 'gulp-open'
-sass = require 'gulp-sass'
-connect = require 'connect'
-es = require 'event-stream'
-gutil = require 'gulp-util'
-clean = require 'gulp-rimraf'
-mocha = require 'gulp-mocha'
-coffee = require 'gulp-coffee'
-rename = require 'gulp-rename'
-embedlr = require 'gulp-embedlr'
-refresh = require 'gulp-livereload'
-minifycss = require 'gulp-minify-css'
-webpack = require 'webpack'
-plumber = require 'gulp-plumber'
-server = do lr
+_             = require 'lodash'
+childProcess  = require 'child_process'
+connect       = require 'connect'
+es            = require 'event-stream'
+fs            = require 'fs'
+gulp          = require 'gulp'
+$             = do require 'gulp-load-plugins'
+http          = require 'http'
+path          = require 'path'
+tinylr        = do require 'tiny-lr'
+webpack       = require 'webpack'
 
-{ red, cyan, blue, green } = gutil.colors
+{ Promise } = require 'es6-promise'
+
+{ red, cyan, blue, green } = $.util.colors
 
 projectPath = "#{path.resolve __dirname}"
 appPath     = "#{projectPath}/app"
@@ -61,7 +49,7 @@ port = 3000
 hostname = null
 # change this to something unique if you want to run multiple projects
 # side-by-side
-lrPort = gutil.env.lrport or 35729
+lrPort = $.util.env.lrport or 35729
 
 # TODO:externalize this to a config file
 defaultChromeLocation = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
@@ -84,7 +72,7 @@ webpackConfig =
       React: 'react'
   ]
 
-if gutil.env.production
+if $.util.env.production
   # even though we have source maps, the uglify plug-in slows the build
   # down considerable so only use it with production flag
   webpackConfig.plugins.push new webpack.optimize.UglifyJsPlugin
@@ -110,24 +98,24 @@ gulp.task 'webserver', ->
 
 gulp.task 'coffee', ->
   gulp.src "#{appPath}/src/**/*.coffee"
-    .pipe plumber()
-    .pipe coffee bare: true
+    .pipe $.plumber()
+    .pipe $.coffee bare: true
     .pipe gulp.dest "#{jsBuildPath}"
 
 # Copies images to dest then reloads the page
 gulp.task 'app:images', ->
   gulp.src "#{appPath}/images/**/*"
     .pipe gulp.dest "#{webBuildPath}/images"
-    .pipe refresh server
+    .pipe $.livereload tinylr
 
 # webpack works best if we compile everything at once instead of splitting
 # into app and test script tasks
 gulp.task 'all:scripts', ['coffee'], (cb) ->
   webpackCompiler.run (err, stats) ->
-    gutil.log '[all:scripts]', stats.toString colors: true
+    $.util.log '[all:scripts]', stats.toString colors: true
 
     # trigger livereload manually
-    server.changed
+    tinylr.changed
       body:
         files: [ 'index.html', 'test.html' ]
 
@@ -136,7 +124,7 @@ gulp.task 'all:scripts', ['coffee'], (cb) ->
 gulp.task 'test:styles', ->
   gulp.src "node_modules/mocha/mocha.css"
     .pipe gulp.dest "#{testBuildPath}/styles"
-    .pipe refresh server
+    .pipe $.livereload tinylr
 
 # Compiles Sass files into css file
 # and reloads the styles
@@ -144,33 +132,36 @@ gulp.task 'app:styles', ->
   es.concat(
     gulp.src "#{appPath}/styles/index.scss"
       # TODO: should include pattern for styles from React components
-      .pipe sass errLogToConsole: true, includePaths: ['styles/includes']
+      .pipe $.sass errLogToConsole: true, includePaths: ['styles/includes']
     , gulp.src "bower_components/normalize-css/normalize.css"
   )
-  .pipe rename 'index.css'
-  .pipe if gutil.env.production then minifycss() else gutil.noop()
+  .pipe $.rename 'index.css'
+  .pipe if $.util.env.production then $.minifyCss() else $.util.noop()
   .pipe gulp.dest "#{webBuildPath}/styles"
-  .pipe refresh server
+  .pipe $.livereload tinylr
 
 # Copy the HTML to web
 gulp.task 'app:html', ->
   gulp.src "#{appPath}/index.html"
     # embeds the live reload script
-    .pipe if gutil.env.production then gutil.noop() else embedlr port: lrPort
+    .pipe if $.util.env.production
+        $.util.noop()
+      else
+        $.embedlr port: lrPort
     .pipe gulp.dest "#{webBuildPath}"
-    .pipe refresh server
+    .pipe $.livereload tinylr
 
 # Copy the HTML to mocha
 gulp.task 'test:html', ->
   gulp.src "#{appPath}/test.html"
     # embeds the live reload script
-    .pipe embedlr()
+    .pipe $.embedlr()
     .pipe gulp.dest "#{testBuildPath}"
-    .pipe refresh server
+    .pipe $.livereload tinylr
 
 gulp.task 'livereload', ->
-  server.listen lrPort, (err) ->
-    gutil.log err if err
+  tinylr.listen lrPort, (err) ->
+    $.util.log err if err
 
 # Watches files for changes
 gulp.task 'watch', ->
@@ -191,11 +182,11 @@ gulp.task 'clean', ['clean:build', 'clean:dist']
 
 gulp.task 'clean:build', ->
   gulp.src ["#{buildPath}"], read: false
-    .pipe clean force: true
+    .pipe $.clean force: true
 
 gulp.task 'clean:dist', ->
   gulp.src ["#{distPath}"], read: false
-    .pipe clean force: true
+    .pipe $.clean force: true
 
 gulp.task 'build', [
   'build:web'
@@ -252,14 +243,14 @@ gulp.task 'build:cordova', ['build:chrome'], ->
     new Promise (resolve, reject) ->
       cmd = 'cca create cordova --link-to=chrome'
       childProcess.exec cmd, cwd: buildPath, (error, stdout, stderr) ->
-        gutil.log cyan stdout
+        $.util.log cyan stdout
         if error
           if error.toString().match pathExistsPattern
-            gutil.log cyan 'Cordova project already exists'
+            $.util.log cyan 'Cordova project already exists'
             resolve()
           else
-            gutil.log red 'build:cordova: createCordova() failed'
-            gutil.log red "\t#{error}"
+            $.util.log red 'build:cordova: createCordova() failed'
+            $.util.log red "\t#{error}"
             reject error
         else
           resolve()
@@ -267,14 +258,14 @@ gulp.task 'build:cordova', ['build:chrome'], ->
     new Promise (resolve, reject) ->
       cmd = 'cca prepare'
       childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
-        gutil.log cyan stdout
+        $.util.log cyan stdout
         if error
           if error.toString().match pathExistsPattern
-            gutil.log cyan 'Cordova project already exists'
+            $.util.log cyan 'Cordova project already exists'
             resolve()
           else
-            gutil.log red 'build:cordova: createCordova() failed'
-            gutil.log red "\t#{error}"
+            $.util.log red 'build:cordova: createCordova() failed'
+            $.util.log red "\t#{error}"
             reject error
         else
           resolve()
@@ -294,15 +285,15 @@ gulp.task 'dist:web', ['build:web'], ->
 
 gulp.task 'dist:chrome', ['build:chrome'], ->
   # Allow a different chrome location to be passed on the command line
-  chrome = gutil.env.chrome or defaultChromeLocation
+  chrome = $.util.env.chrome or defaultChromeLocation
   cmd = "'#{chrome}' --pack-extension=build/chrome --pack-extension-key=chromeapp.pem"
 
   packageChrome = ->
     new Promise (resolve, reject) ->
       childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
         if error
-          gutil.log red 'dist:chrome failed:'
-          gutil.log red "\t#{stderr}"
+          $.util.log red 'dist:chrome failed:'
+          $.util.log red "\t#{stderr}"
           reject()
         else
           resolve()
@@ -312,8 +303,8 @@ gulp.task 'dist:chrome', ['build:chrome'], ->
       src = "#{buildPath}/chrome.crx"
       dest = "#{chromeDistPath}"
       gulp.src src
-        .pipe clean force: true
-        .pipe rename chromePackageName
+        .pipe $.clean force: true
+        .pipe $.rename chromePackageName
         .pipe gulp.dest chromeDistPath
         .on 'end', resolve
 
@@ -322,15 +313,15 @@ gulp.task 'dist:chrome', ['build:chrome'], ->
 gulp.task 'dist:android', ['build:cordova'], (finishedTask) ->
   childProcess.exec './build --release', cwd: "#{cordovaPath}/platforms/android/cordova", (error, stdout, stderr) ->
     if error
-      gutil.log red 'dist:android failed:'
-      gutil.log red "\t#{stderr}"
+      $.util.log red 'dist:android failed:'
+      $.util.log red "\t#{stderr}"
     else
       gulp.src "#{cordovaPath}/platforms/android/ant-build/*.apk"
         .pipe gulp.dest androidDistPath
     finishedTask()
 
 gulp.task 'dist:ios', ['build:cordova'], ->
-  gutil.log "\t#{blue 'TODO: build .ipa'}"
+  $.util.log "\t#{blue 'TODO: build .ipa'}"
 
 do (serverOpts = [
   'build:web'
@@ -339,39 +330,39 @@ do (serverOpts = [
   'livereload'
   'watch'
 ]) ->
-  serverOpts.push 'browse' if gutil.env.open
+  serverOpts.push 'browse' if $.util.env.open
   gulp.task 'run:web', serverOpts
 
 gulp.task 'run:test', ['build:test'], ->
   gulp.src "#{jsBuildPath}/test.js", read: false
-    .pipe mocha reporter: 'nyan'
+    .pipe $.mocha reporter: 'nyan'
 
 gulp.task 'run:ios', ['build:cordova'], (finishedTask) ->
-  cmd = "cca run ios #{if gutil.env.emulator then '--emulator' else ''}"
+  cmd = "cca run ios #{if $.util.env.emulator then '--emulator' else ''}"
   childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
     if error
-      gutil.log red 'ios failed:'
-      gutil.log red "\t#{stderr}"
+      $.util.log red 'ios failed:'
+      $.util.log red "\t#{stderr}"
     finishedTask()
 
 gulp.task 'run:android', ['build:cordova'], (finishedTask) ->
-  cmd = "cca run android #{if gutil.env.emulator then '--emulator' else ''}"
+  cmd = "cca run android #{if $.util.env.emulator then '--emulator' else ''}"
   childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
     if error
-      gutil.log red 'android failed:'
-      gutil.log red "\t#{stderr}"
+      $.util.log red 'android failed:'
+      $.util.log red "\t#{stderr}"
     finishedTask()
 
 gulp.task 'run:chrome', ['dist:chrome'], (finishedTask) ->
-  gutil.log "\t#{blue 'TODO'}"
+  $.util.log "\t#{blue 'TODO'}"
   # # Allow a different chrome location to be passed on the command line
-  # chrome = gutil.env.chrome or defaultChromeLocation
+  # chrome = $.util.env.chrome or defaultChromeLocation
   # cmd = "'#{chrome}' #{chromeDistPath}/#{chromePackageName}"
-  # gutil.log "Running #{blue cmd}"
+  # $.util.log "Running #{blue cmd}"
   # childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
   #   if error
-  #     gutil.log red 'run:chrome failed:'
-  #     gutil.log red "\t#{stderr}"
+  #     $.util.log red 'run:chrome failed:'
+  #     $.util.log red "\t#{stderr}"
 
 gulp.task 'default', ['build']
 
