@@ -7,6 +7,7 @@ gulp          = require 'gulp'
 $             = do require 'gulp-load-plugins'
 http          = require 'http'
 path          = require 'path'
+serveStatic   = require 'serve-static'
 tinylr        = do require 'tiny-lr'
 webpack       = require 'webpack'
 
@@ -90,13 +91,12 @@ webpackCompiler = webpack webpackConfig
 gulp.task 'webserver', ->
   application = connect()
     # allows import of npm/bower resources
-    .use connect.static nodeModulesPath
-    .use connect.static bowerComponentsPath
+    .use serveStatic nodeModulesPath
+    .use serveStatic bowerComponentsPath
     # Mount the mocha tests
-    .use connect.static testBuildPath
+    .use serveStatic testBuildPath
     # Mount the app
-    .use connect.static webBuildPath
-    .use connect.directory webBuildPath
+    .use serveStatic webBuildPath
   (http.createServer application).listen port, hostname
 
 gulp.task 'coffee', ->
