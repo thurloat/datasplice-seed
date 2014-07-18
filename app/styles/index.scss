@@ -1,8 +1,6 @@
-@import "../../bower_components/bootstrap-sass/lib/bootstrap";
-@import "../../bower_components/bootstrap-sass/lib/theme";
+@import 'font-awesome/scss/font-awesome';
+@import "bootstrap-sass/assets/stylesheets/bootstrap";
 
 body {
   padding: 10px;
 }
-
-@import "../src/ui/widgets/jumbotron";

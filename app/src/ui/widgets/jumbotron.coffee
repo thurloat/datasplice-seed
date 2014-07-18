@@ -1,3 +1,5 @@
+require './jumbotron.scss'
+
 {div} = React.DOM
 
 Jumbotron = React.createClass

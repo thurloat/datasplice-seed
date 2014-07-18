@@ -14,10 +14,11 @@ webpack       = require 'webpack'
 
 { red, cyan, blue, green, magenta } = $.util.colors
 
-projectPath = "#{path.resolve __dirname}"
-appPath     = "#{projectPath}/app"
-buildPath   = "#{projectPath}/build"
-distPath    = "#{projectPath}/dist"
+projectPath       = "#{path.resolve __dirname}"
+appPath           = "#{projectPath}/app"
+buildPath         = "#{projectPath}/build"
+distPath          = "#{projectPath}/dist"
+nodeModulesPath   = "#{projectPath}/node_modules"
 
 cordovaPath     = "#{buildPath}/cordova"
 jsBuildPath     = "#{buildPath}/js"
@@ -30,17 +31,15 @@ globalVendorsFileName = 'global.js'
 
 webDistPath       = "#{distPath}/web"
 chromeDistPath    = "#{distPath}/chrome"
-chromePackageName = 'datasplice-seed.crx'
 androidDistPath   = "#{distPath}/android"
 iosDistPath       = "#{distPath}/ios"
 
-nodeModulesPath     = "#{projectPath}/node_modules"
-bowerComponentsPath = "#{projectPath}/bower_components"
+chromePackageName = 'datasplice-seed.crx'
 
 vendorAssets = [
   {
-    name: 'glyphicons'
-    base: './bower_components/bootstrap-sass/fonts'
+    name: 'font-awesome'
+    base: "#{nodeModulesPath}/font-awesome/fonts"
     dest: "#{webBuildPath}/fonts"
     shared: true
     assets: [ '*.*' ]
@@ -59,13 +58,57 @@ defaultChromeLocation = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\
 
 webpackConfig =
   cache: true
+  devtool: 'source-map' unless $.util.env.nosourcemap
+  debug: not $.util.env.production
   entry:
-    shared: "#{jsBuildPath}/shared.js"
-    index: "#{jsBuildPath}/index.js"
-    test: "#{jsBuildPath}/test.js"
+    # Unecessary. CommonsChunkPlugin will identify the shared stuff
+    # shared: "#{appPath}/src/shared.coffee"
+    index: "#{appPath}/src/index.coffee"
+    test: "#{appPath}/src/test.coffee"
   output:
     path: "#{webBuildPath}/src"
     filename: '[name].js'
+  resolve:
+    extensions: [
+      ''
+      '.coffee'
+      '.js'
+    ]
+  module:
+    loaders: [
+      # need to disable AMD loader with sinon. see:
+      # https://github.com/webpack/webpack/issues/177
+      test: /sinon\.js$/, loader: 'imports?define=>false'
+    ,
+      test:
+        ///
+        \.gif$
+        |\.eot$
+        |\.jpe?g$
+        |\.mp3$
+        |\.png$
+        |\.svg$
+        |\.ttf$
+        |\.wav$
+        |\.woff$
+        ///
+      loader: 'url-loader'
+    ,
+      test: /\.scss$/
+      # For syntax of loader configuration see:
+      #   https://github.com/webpack/loader-utils#parsequery
+      loader: 'style-loader!css-loader!sass-loader?\
+        includePaths[]=app/src,\
+        includePaths[]=app/src/ui,\
+        includePaths[]=app/src/ui/widgets,\
+        includePaths[]=node_modules'
+    ,
+      test: /\.css$/
+      loader: 'style-loader!css-loader'
+    ,
+      test: /\.coffee$/
+      loader: 'coffee-loader'
+    ]
   plugins: [
     new webpack.optimize.CommonsChunkPlugin 'lib.js', null, 2
     # expose common libraries globally so they don't have to be required
@@ -75,34 +118,19 @@ webpackConfig =
       React: 'react'
   ]
 
-if $.util.env.production
-  # even though we have source maps, the uglify plug-in slows the build
-  # down considerable so only use it with production flag
-  webpackConfig.plugins.push new webpack.optimize.UglifyJsPlugin
-else
-  webpackConfig.devtool = 'sourcemap'
-  webpackConfig.debug = true
-
 # create a single webpack compiler to allow caching
 webpackCompiler = webpack webpackConfig
 
 # Starts the webserver
 gulp.task 'webserver', ->
   application = connect()
-    # allows import of npm/bower resources
+    # allows import of npm resources
     .use serveStatic nodeModulesPath
-    .use serveStatic bowerComponentsPath
     # Mount the mocha tests
     .use serveStatic testBuildPath
     # Mount the app
     .use serveStatic webBuildPath
   (http.createServer application).listen port, hostname
-
-gulp.task 'coffee', ->
-  gulp.src "#{appPath}/src/**/*.coffee"
-    .pipe $.plumber()
-    .pipe $.coffee bare: true
-    .pipe gulp.dest "#{jsBuildPath}"
 
 # Copies images to dest then reloads the page
 gulp.task 'app:images', ->
@@ -111,9 +139,9 @@ gulp.task 'app:images', ->
 
 # webpack works best if we compile everything at once instead of splitting
 # into app and test script tasks
-gulp.task 'all:scripts', ['coffee'], (cb) ->
+gulp.task 'app:src', (cb) ->
   webpackCompiler.run (err, stats) ->
-    $.util.log '[all:scripts]', stats.toString colors: true
+    $.util.log '[app:src]', stats.toString colors: true
 
     cb err
 
@@ -124,15 +152,12 @@ gulp.task 'test:styles', ->
 # Compiles Sass files into css file
 # and reloads the styles
 gulp.task 'app:styles', ->
-  es.concat(
-    gulp.src "#{appPath}/styles/index.scss"
-      # TODO: should include pattern for styles from React components
-      .pipe $.sass errLogToConsole: true, includePaths: ['styles/includes']
-    , gulp.src "bower_components/normalize-css/normalize.css"
-  )
-  .pipe $.rename 'index.css'
-  .pipe if $.util.env.production then $.minifyCss() else $.util.noop()
-  .pipe gulp.dest "#{webBuildPath}/styles"
+  gulp.src "#{appPath}/styles/index.scss"
+    .pipe $.sass
+      errLogToConsole: true
+      includePaths: ['node_modules']
+    .pipe if $.util.env.production then $.minifyCss() else $.util.noop()
+    .pipe gulp.dest "#{webBuildPath}/styles"
 
 # Copy the HTML to web
 gulp.task 'app:html', ->
@@ -160,7 +185,7 @@ gulp.task 'watch', ->
     -> $.runSequence task, 'livereload'
 
   gulp.watch "#{appPath}/images/**", doReload 'app:images'
-  gulp.watch "#{appPath}/src/**/*.coffee", doReload 'all:scripts'
+  gulp.watch "#{appPath}/src/**/*.coffee", doReload 'app:src'
   gulp.watch "#{appPath}/src/**/*.scss", doReload 'app:styles'
   gulp.watch "#{appPath}/styles/**", doReload 'app:styles'
   gulp.watch "#{appPath}/index.html", doReload 'app:html'
@@ -194,13 +219,13 @@ gulp.task 'build:web', [
   'app:html'
   'app:images'
   'app:styles'
-  'all:scripts'
+  'app:src'
 ]
 
 gulp.task 'build:test', [
   'test:html'
   'test:styles'
-  'all:scripts'
+  'app:src'
 ]
 
 # Grabs assets from vendors and puts in build/web/vendor
@@ -252,7 +277,7 @@ gulp.task 'build:chrome', ['build:web'], (finishedTask) ->
     'manifest.mobile.json'
   ]
     .pipe gulp.dest "#{chromeBuildPath}"
-  finishedTask()
+    .on 'end', finishedTask
 
 gulp.task 'build:android', ['build:cordova']
 gulp.task 'build:ios', ['build:cordova']
@@ -301,7 +326,16 @@ gulp.task 'dist', [
 ]
 
 gulp.task 'dist:web', ['build:web'], ->
-  gulp.src "#{webBuildPath}/**/*"
+  gulp.src [
+      "#{webBuildPath}/src/*.js"
+      "!#{webBuildPath}/src/test.js"
+    ]
+    .pipe $.uglify()
+    .pipe gulp.dest "#{webDistPath}/src"
+  gulp.src [
+      "#{webBuildPath}/**/*"
+      "!#{webBuildPath}/{src,src/**}"
+    ]
     .pipe gulp.dest webDistPath
 
 gulp.task 'dist:chrome', ['build:chrome'], ->
