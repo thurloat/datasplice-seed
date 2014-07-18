@@ -108,7 +108,6 @@ gulp.task 'coffee', ->
 gulp.task 'app:images', ->
   gulp.src "#{appPath}/images/**/*"
     .pipe gulp.dest "#{webBuildPath}/images"
-    .pipe $.livereload()
 
 # webpack works best if we compile everything at once instead of splitting
 # into app and test script tasks
@@ -116,15 +115,11 @@ gulp.task 'all:scripts', ['coffee'], (cb) ->
   webpackCompiler.run (err, stats) ->
     $.util.log '[all:scripts]', stats.toString colors: true
 
-    # trigger livereload manually
-    $.livereload.changed()
-
     cb err
 
 gulp.task 'test:styles', ->
   gulp.src "node_modules/mocha/mocha.css"
     .pipe gulp.dest "#{testBuildPath}/styles"
-    .pipe $.livereload()
 
 # Compiles Sass files into css file
 # and reloads the styles
@@ -138,7 +133,7 @@ gulp.task 'app:styles', ->
   .pipe $.rename 'index.css'
   .pipe if $.util.env.production then $.minifyCss() else $.util.noop()
   .pipe gulp.dest "#{webBuildPath}/styles"
-  .pipe $.livereload()
+
 # Copy the HTML to web
 gulp.task 'app:html', ->
   gulp.src "#{appPath}/index.html"
@@ -148,26 +143,28 @@ gulp.task 'app:html', ->
       else
         $.embedlr port: lrPort
     .pipe gulp.dest "#{webBuildPath}"
-    .pipe $.livereload()
+
 # Copy the HTML to mocha
 gulp.task 'test:html', ->
   gulp.src "#{appPath}/test.html"
     # embeds the live reload script
     .pipe $.embedlr()
     .pipe gulp.dest "#{testBuildPath}"
-    .pipe $.livereload()
+
 gulp.task 'livereload', ->
-  $.livereload.listen lrPort, (err) ->
-    $.util.log err if err
+  $.livereload.changed()
 
 # Watches files for changes
 gulp.task 'watch', ->
-  gulp.watch "#{appPath}/images/**", ['app:images']
-  gulp.watch "#{appPath}/src/**/*.coffee", ['all:scripts']
-  gulp.watch "#{appPath}/src/**/*.scss", ['app:styles']
-  gulp.watch "#{appPath}/styles/**", ['app:styles']
-  gulp.watch "#{appPath}/index.html", ['app:html']
-  gulp.watch "#{appPath}/test.html", ['test:html']
+  doReload = (task) ->
+    -> $.runSequence task, 'livereload'
+
+  gulp.watch "#{appPath}/images/**", doReload 'app:images'
+  gulp.watch "#{appPath}/src/**/*.coffee", doReload 'all:scripts'
+  gulp.watch "#{appPath}/src/**/*.scss", doReload 'app:styles'
+  gulp.watch "#{appPath}/styles/**", doReload 'app:styles'
+  gulp.watch "#{appPath}/index.html", doReload 'app:html'
+  gulp.watch "#{appPath}/test.html", doReload 'test:html'
 
 # Opens the app in your browser
 gulp.task 'browse', ->
@@ -351,11 +348,12 @@ do (serverOpts = [
   'build:web'
   'build:test'
   'webserver'
-  'livereload'
   'watch'
 ]) ->
   serverOpts.push 'browse' if $.util.env.open
-  gulp.task 'run:web', serverOpts
+  gulp.task 'run:web', serverOpts, ->
+    $.livereload.listen lrPort, (err) ->
+      $.util.log err if err
 
 gulp.task 'run:test', ['build:test'], ->
   gulp.src "#{jsBuildPath}/test.js", read: false
