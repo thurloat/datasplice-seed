@@ -6,6 +6,8 @@ http = require 'http'
 path = require 'path'
 lr = require 'tiny-lr'
 childProcess = require 'child_process'
+{ Promise } = require 'es6-promise'
+gulp = require 'gulp'
 open = require 'gulp-open'
 sass = require 'gulp-sass'
 connect = require 'connect'
@@ -243,7 +245,7 @@ gulp.task 'build:chrome', ['build:web'], (finishedTask) ->
 gulp.task 'build:android', ['build:cordova']
 gulp.task 'build:ios', ['build:cordova']
 
-gulp.task 'build:cordova', ['build:chrome'], (finishedTask) ->
+gulp.task 'build:cordova', ['build:chrome'], ->
   # Path exists is harmless. Use this to avoid scary log output
   pathExistsPattern = /Path already exists/g
   createCordova = ->
@@ -254,10 +256,11 @@ gulp.task 'build:cordova', ['build:chrome'], (finishedTask) ->
         if error
           if error.toString().match pathExistsPattern
             gutil.log cyan 'Cordova project already exists'
+            resolve()
           else
             gutil.log red 'build:cordova: createCordova() failed'
             gutil.log red "\t#{error}"
-          resolve error
+            reject error
         else
           resolve()
   prepareCordova = ->
@@ -268,20 +271,15 @@ gulp.task 'build:cordova', ['build:chrome'], (finishedTask) ->
         if error
           if error.toString().match pathExistsPattern
             gutil.log cyan 'Cordova project already exists'
+            resolve()
           else
             gutil.log red 'build:cordova: createCordova() failed'
             gutil.log red "\t#{error}"
-          resolve error
+            reject error
         else
           resolve()
 
-  (Promise.resolve createCordova())
-    .then (error) -> prepareCordova() unless error?
-    .then (error) ->
-      if error
-        throw error
-      else
-        finishedTask()
+  createCordova().then prepareCordova
 
 gulp.task 'dist', [
   'dist:web'
@@ -294,7 +292,7 @@ gulp.task 'dist:web', ['build:web'], ->
   gulp.src "#{webBuildPath}/**/*"
     .pipe gulp.dest webDistPath
 
-gulp.task 'dist:chrome', ['build:chrome'], (finishedTask) ->
+gulp.task 'dist:chrome', ['build:chrome'], ->
   # Allow a different chrome location to be passed on the command line
   chrome = gutil.env.chrome or defaultChromeLocation
   cmd = "'#{chrome}' --pack-extension=build/chrome --pack-extension-key=chromeapp.pem"
@@ -307,21 +305,17 @@ gulp.task 'dist:chrome', ['build:chrome'], (finishedTask) ->
           gutil.log red "\t#{stderr}"
           reject()
         else
-          gutil.log "Executed #{cmd}"
           resolve()
 
   movePackage = ->
-    src = "#{buildPath}/chrome.crx"
-    dest = "#{chromeDistPath}"
-    gulp.src src
-      .pipe clean force: true
-      .pipe rename chromePackageName
-      .pipe gulp.dest dest
-      .on 'end', done
-
-  done = ->
-    console.log 'Calling callback just once'
-    finishedTask()
+    new Promise (resolve, reject) ->
+      src = "#{buildPath}/chrome.crx"
+      dest = "#{chromeDistPath}"
+      gulp.src src
+        .pipe clean force: true
+        .pipe rename chromePackageName
+        .pipe gulp.dest chromeDistPath
+        .on 'end', resolve
 
   packageChrome().then movePackage
 
