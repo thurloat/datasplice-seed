@@ -8,7 +8,6 @@ $             = do require 'gulp-load-plugins'
 http          = require 'http'
 path          = require 'path'
 serveStatic   = require 'serve-static'
-tinylr        = do require 'tiny-lr'
 webpack       = require 'webpack'
 
 { Promise } = require 'es6-promise'
@@ -109,7 +108,7 @@ gulp.task 'coffee', ->
 gulp.task 'app:images', ->
   gulp.src "#{appPath}/images/**/*"
     .pipe gulp.dest "#{webBuildPath}/images"
-    .pipe $.livereload tinylr
+    .pipe $.livereload()
 
 # webpack works best if we compile everything at once instead of splitting
 # into app and test script tasks
@@ -118,16 +117,14 @@ gulp.task 'all:scripts', ['coffee'], (cb) ->
     $.util.log '[all:scripts]', stats.toString colors: true
 
     # trigger livereload manually
-    tinylr.changed
-      body:
-        files: [ 'index.html', 'test.html' ]
+    $.livereload.changed()
 
     cb err
 
 gulp.task 'test:styles', ->
   gulp.src "node_modules/mocha/mocha.css"
     .pipe gulp.dest "#{testBuildPath}/styles"
-    .pipe $.livereload tinylr
+    .pipe $.livereload()
 
 # Compiles Sass files into css file
 # and reloads the styles
@@ -141,8 +138,7 @@ gulp.task 'app:styles', ->
   .pipe $.rename 'index.css'
   .pipe if $.util.env.production then $.minifyCss() else $.util.noop()
   .pipe gulp.dest "#{webBuildPath}/styles"
-  .pipe $.livereload tinylr
-
+  .pipe $.livereload()
 # Copy the HTML to web
 gulp.task 'app:html', ->
   gulp.src "#{appPath}/index.html"
@@ -152,18 +148,16 @@ gulp.task 'app:html', ->
       else
         $.embedlr port: lrPort
     .pipe gulp.dest "#{webBuildPath}"
-    .pipe $.livereload tinylr
-
+    .pipe $.livereload()
 # Copy the HTML to mocha
 gulp.task 'test:html', ->
   gulp.src "#{appPath}/test.html"
     # embeds the live reload script
     .pipe $.embedlr()
     .pipe gulp.dest "#{testBuildPath}"
-    .pipe $.livereload tinylr
-
+    .pipe $.livereload()
 gulp.task 'livereload', ->
-  tinylr.listen lrPort, (err) ->
+  $.livereload.listen lrPort, (err) ->
     $.util.log err if err
 
 # Watches files for changes
