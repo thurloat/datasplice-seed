@@ -58,7 +58,7 @@ defaultChromeLocation = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\
 
 webpackConfig =
   cache: true
-  # devtool: 'source-map' unless $.util.env.nosourcemap
+  devtool: 'source-map' unless $.util.env.nosourcemap
   debug: not $.util.env.production
   entry:
     # Unecessary. CommonsChunkPlugin will identify the shared stuff
@@ -132,12 +132,6 @@ gulp.task 'webserver', ->
     # Mount the app
     .use serveStatic webBuildPath
   (http.createServer application).listen port, hostname
-
-# gulp.task 'coffee', ->
-#   gulp.src "#{appPath}/src/**/*.coffee"
-#     .pipe $.plumber()
-#     .pipe $.coffee bare: true
-#     .pipe gulp.dest "#{jsBuildPath}"
 
 # Copies images to dest then reloads the page
 gulp.task 'app:images', ->
