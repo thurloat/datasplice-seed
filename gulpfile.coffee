@@ -125,7 +125,7 @@ webpackCompiler = webpack webpackConfig
 gulp.task 'webserver', ->
   application = connect()
     # allows import of npm resources
-    .use connect.static nodeModulesPath
+    .use serveStatic nodeModulesPath
     # Mount the mocha tests
     .use serveStatic testBuildPath
     # Mount the app
@@ -185,7 +185,7 @@ gulp.task 'watch', ->
     -> $.runSequence task, 'livereload'
 
   gulp.watch "#{appPath}/images/**", doReload 'app:images'
-  gulp.watch "#{appPath}/src/**/*.coffee", doReload 'all:scripts'
+  gulp.watch "#{appPath}/src/**/*.coffee", doReload 'app:src'
   gulp.watch "#{appPath}/src/**/*.scss", doReload 'app:styles'
   gulp.watch "#{appPath}/styles/**", doReload 'app:styles'
   gulp.watch "#{appPath}/index.html", doReload 'app:html'
