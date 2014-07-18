@@ -1,7 +1,7 @@
 Versions = require './versions'
 Jumbotron = require './widgets/jumbotron'
 
-{div, span, img, h1, a, p, pre} = React.DOM
+{div, i, img, h1, a, p, pre} = React.DOM
 
 UI = React.createClass
   displayName: 'UI'
@@ -10,7 +10,7 @@ UI = React.createClass
     div className: 'container',
       Jumbotron fullWidth: false,
         h1 {},
-          span className: 'glyphicon glyphicon-leaf'
+          i className: 'fa fa-leaf'
           ' Ready...'
         p {},
           a href: 'test.html', className: 'btn btn-primary btn-lg', role: 'button',

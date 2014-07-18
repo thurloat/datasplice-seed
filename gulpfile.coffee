@@ -38,9 +38,9 @@ chromePackageName = 'datasplice-seed.crx'
 
 vendorAssets = [
   {
-    name: 'glyphicons'
-    base: "#{nodeModulesPath}/bootstrap-sass/assets/fonts/bootstrap"
-    dest: "#{webBuildPath}/fonts/bootstrap"
+    name: 'font-awesome'
+    base: "#{nodeModulesPath}/font-awesome/fonts"
+    dest: "#{webBuildPath}/fonts"
     shared: true
     assets: [ '*.*' ]
   }
@@ -160,8 +160,9 @@ gulp.task 'test:styles', ->
 # and reloads the styles
 gulp.task 'app:styles', ->
   gulp.src "#{appPath}/styles/index.scss"
-    .pipe $.sass errLogToConsole: true, includePaths: ['node_modules']
-    .pipe $.rename 'index.css'
+    .pipe $.sass
+      errLogToConsole: true
+      includePaths: ['node_modules']
     .pipe if $.util.env.production then $.minifyCss() else $.util.noop()
     .pipe gulp.dest "#{webBuildPath}/styles"
 
