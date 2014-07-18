@@ -25,6 +25,9 @@ webBuildPath    = "#{buildPath}/web"
 testBuildPath   = "#{buildPath}/test"
 chromeBuildPath = "#{buildPath}/chrome"
 
+globalVendorsPath = "#{webBuildPath}/vendor"
+globalVendorsFileName = 'global.js'
+
 webDistPath       = "#{distPath}/web"
 chromeDistPath    = "#{distPath}/chrome"
 chromePackageName = 'datasplice-seed.crx'
