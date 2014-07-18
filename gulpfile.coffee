@@ -182,11 +182,11 @@ gulp.task 'clean', ['clean:build', 'clean:dist']
 
 gulp.task 'clean:build', ->
   gulp.src ["#{buildPath}"], read: false
-    .pipe $.clean force: true
+    .pipe $.rimraf force: true
 
 gulp.task 'clean:dist', ->
   gulp.src ["#{distPath}"], read: false
-    .pipe $.clean force: true
+    .pipe $.rimraf force: true
 
 gulp.task 'build', [
   'build:web'
@@ -330,7 +330,7 @@ gulp.task 'dist:chrome', ['build:chrome'], ->
       src = "#{buildPath}/chrome.crx"
       dest = "#{chromeDistPath}"
       gulp.src src
-        .pipe $.clean force: true
+        .pipe $.rimraf force: true
         .pipe $.rename chromePackageName
         .pipe gulp.dest chromeDistPath
         .on 'end', resolve
