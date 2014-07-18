@@ -117,7 +117,6 @@ webpackConfig =
       async: 'async'
       React: 'react'
   ]
-webpackConfig.plugins.push new webpack.optimize.UglifyJsPlugin if $.util.env.production
 
 # create a single webpack compiler to allow caching
 webpackCompiler = webpack webpackConfig
@@ -278,7 +277,7 @@ gulp.task 'build:chrome', ['build:web'], (finishedTask) ->
     'manifest.mobile.json'
   ]
     .pipe gulp.dest "#{chromeBuildPath}"
-  finishedTask()
+    .on 'end', finishedTask
 
 gulp.task 'build:android', ['build:cordova']
 gulp.task 'build:ios', ['build:cordova']
@@ -327,7 +326,16 @@ gulp.task 'dist', [
 ]
 
 gulp.task 'dist:web', ['build:web'], ->
-  gulp.src "#{webBuildPath}/**/*"
+  gulp.src [
+      "#{webBuildPath}/src/*.js"
+      "!#{webBuildPath}/src/test.js"
+    ]
+    .pipe $.uglify()
+    .pipe gulp.dest "#{webDistPath}/src"
+  gulp.src [
+      "#{webBuildPath}/**/*"
+      "!#{webBuildPath}/{src,src/**}"
+    ]
     .pipe gulp.dest webDistPath
 
 gulp.task 'dist:chrome', ['build:chrome'], ->
