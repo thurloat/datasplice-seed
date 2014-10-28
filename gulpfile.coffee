@@ -1,6 +1,7 @@
 _             = require 'lodash'
 childProcess  = require 'child_process'
 connect       = require 'connect'
+del           = require 'del'
 es            = require 'event-stream'
 fs            = require 'fs'
 gulp          = require 'gulp'
@@ -199,13 +200,11 @@ gulp.task 'browse', ->
 
 gulp.task 'clean', ['clean:build', 'clean:dist']
 
-gulp.task 'clean:build', ->
-  gulp.src ["#{buildPath}"], read: false
-    .pipe $.rimraf force: true
+gulp.task 'clean:build', (cb) ->
+  del [ buildPath ], cb
 
-gulp.task 'clean:dist', ->
-  gulp.src ["#{distPath}"], read: false
-    .pipe $.rimraf force: true
+gulp.task 'clean:dist', (cb) ->
+  del [ distPath ], cb
 
 gulp.task 'build', [
   'build:web'
@@ -357,11 +356,12 @@ gulp.task 'dist:chrome', ['build:chrome'], ->
     new Promise (resolve, reject) ->
       src = "#{buildPath}/chrome.crx"
       dest = "#{chromeDistPath}"
-      gulp.src src
-        .pipe $.rimraf force: true
-        .pipe $.rename chromePackageName
-        .pipe gulp.dest chromeDistPath
-        .on 'end', resolve
+      del [ src ], ->
+        gulp.src src
+          .pipe $.rimraf force: true
+          .pipe $.rename chromePackageName
+          .pipe gulp.dest chromeDistPath
+          .on 'end', resolve
 
   packageChrome().then movePackage
 
@@ -421,4 +421,3 @@ gulp.task 'run:chrome', ['dist:chrome'], (finishedTask) ->
   #     $.util.log red "\t#{stderr}"
 
 gulp.task 'default', ['build']
-
