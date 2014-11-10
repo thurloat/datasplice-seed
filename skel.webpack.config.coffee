@@ -28,6 +28,7 @@ module.exports = (paths) ->
     ]
   plugins: [
     new AppCachePlugin
+      cache: [ 'favicon.ico' ]
       network: [ '*', 'http://*', 'https://*' ]
   ]
 

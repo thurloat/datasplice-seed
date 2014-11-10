@@ -55,7 +55,7 @@ gulp.task 'clean', (cb) ->
 
 # static skeleton resources
 gulp.task 'build:static', ->
-  gulp.src "#{paths.source}/index.html"
+  gulp.src [ "#{paths.source}/index.html", "#{paths.source}/favicon.ico" ]
     .pipe gulp.dest "#{paths.build}/skel"
 
 # skeleton application, shared libraries, etc
@@ -66,7 +66,6 @@ gulp.task 'build:skel', ['build:static'], (cb) ->
     $.util.log '[skel:src]', stats.toString colors: true
     cb err
 
-# gulp.task 'build:app', [ 'build:skel' ], (cb) ->
 gulp.task 'build:app', (cb) ->
   unless $.util.env.nouglify
     appConfig.plugins.push new webpack.optimize.UglifyJsPlugin
