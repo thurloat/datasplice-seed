@@ -6,6 +6,3 @@ sinonChai = require 'sinon-chai'
 expect = chai.expect
 chai.use sinonChai
 chai.should()
-
-# TODO: do this dynamically
-require './util/add_spec'

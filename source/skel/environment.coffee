@@ -17,6 +17,6 @@ window.RSVP = { Promise, all: Promise.all.bind Promise }
 # by design changes to the application cache are not available until the page
 # is refreshed after the cache has been updated. detect that and automatically
 # refresh the page if that is the case (http://appcachefacts.info/)
-# ac = window.applicationCache
-# if ac
-#   ac.addEventListener 'updateready', -> location.reload()
+ac = window.applicationCache
+if ac
+  ac.addEventListener 'updateready', -> location.reload()

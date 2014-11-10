@@ -41,7 +41,8 @@ appConfig.plugins.push new AppManifestPlugin
 
 gulp.task 'default', [ 'run' ]
 
-gulp.task 'build', [ 'build:skel', 'build:app' ]
+gulp.task 'build', [ 'build:skel' ], ->
+  gulp.start 'build:app'
 
 gulp.task 'run', [ 'build:skel' ], ->
   gulp.start 'run:webpack'
@@ -65,7 +66,8 @@ gulp.task 'build:skel', ['build:static'], (cb) ->
     $.util.log '[skel:src]', stats.toString colors: true
     cb err
 
-gulp.task 'build:app', [ 'build:skel' ], (cb) ->
+# gulp.task 'build:app', [ 'build:skel' ], (cb) ->
+gulp.task 'build:app', (cb) ->
   unless $.util.env.nouglify
     appConfig.plugins.push new webpack.optimize.UglifyJsPlugin
 
@@ -78,4 +80,4 @@ gulp.task 'build:app', [ 'build:skel' ], (cb) ->
 
 gulp.task 'run:webpack', ->
   compiler = webpack appConfig
-  devServer compiler, "#{paths.build}/skel", appConfig.output.publicPath
+  devServer compiler, "#{paths.build}/skel"

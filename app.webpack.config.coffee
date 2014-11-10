@@ -4,8 +4,7 @@ module.exports = (paths) ->
   cache:true
   entry: "#{paths.source}/app/app.coffee"
   output:
-    path: "#{paths.build}/scripts"
-    publicPath: "scripts/"
+    path: "#{paths.build}/app"
     filename: 'app.js'
   resolve:
     # Allow to omit extensions when requiring these files

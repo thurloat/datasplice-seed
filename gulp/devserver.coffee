@@ -3,11 +3,10 @@ WebpackDevServer = require 'webpack-dev-server'
 
 { red, cyan, blue, green, magenta } = $.util.colors
 
-module.exports = (compiler, buildPath, publicPath) ->
+module.exports = (compiler, buildPath) ->
   port = $.util.env.listenport or 8080
   new WebpackDevServer compiler,
     contentBase: buildPath
-    publicPath: "/#{publicPath}"
     stats: { colors: true }
   .listen port, 'localhost', (err) ->
     if err
