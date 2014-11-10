@@ -4,6 +4,7 @@ path = require 'path'
 
 gulp = require 'gulp'
 $ = do require 'gulp-load-plugins'
+runSequence = require 'run-sequence'
 
 webpack = require 'webpack'
 
@@ -17,6 +18,8 @@ paths =
   base:   projectPath
   source: "#{projectPath}/source"
   build:  "#{projectPath}/build"
+  skel:   "#{projectPath}/build/skel"
+  app:    "#{projectPath}/build/app"
   dist:   "#{projectPath}/dist"
 
 # load and update the config settings for Webpack
@@ -42,11 +45,16 @@ appConfig.plugins.push new AppManifestPlugin skip: 'test.js'
 
 gulp.task 'default', [ 'run' ]
 
-gulp.task 'build', [ 'build:skel' ], ->
-  gulp.start 'build:app'
+gulp.task 'build', [ 'build:skel', 'build:app' ]
+
+gulp.task 'dist', (cb) ->
+  runSequence 'build', 'build:dist', cb
 
 gulp.task 'run', [ 'build:skel' ], ->
   gulp.start 'run:webpack'
+
+gulp.task 'test', (cb) ->
+  runSequence 'dist', 'run:mocha', cb
 
 gulp.task 'clean', (cb) ->
   del [ paths.build, paths.dist ], cb
@@ -57,7 +65,7 @@ gulp.task 'clean', (cb) ->
 # static skeleton resources
 gulp.task 'build:static', ->
   gulp.src [ "#{paths.source}/*.html", "#{paths.source}/favicon.ico" ]
-    .pipe gulp.dest "#{paths.build}/skel"
+    .pipe gulp.dest "#{paths.skel}"
 
 # skeleton application, shared libraries, etc
 gulp.task 'build:skel', ['build:static'], (cb) ->
@@ -75,9 +83,16 @@ gulp.task 'build:app', (cb) ->
     $.util.log '[app:src]', stats.toString colors: true
     cb err
 
+gulp.task 'build:dist', ->
+  gulp.src [ "#{paths.skel}/**/*", "#{paths.app}/**/*" ]
+    .pipe gulp.dest paths.dist
 
 # run tasks
 
 gulp.task 'run:webpack', ->
   compiler = webpack appConfig
-  devServer compiler, "#{paths.build}/skel"
+  devServer compiler, "#{paths.skel}"
+
+gulp.task 'run:mocha', ->
+  gulp.src "#{paths.dist}/test.html"
+    .pipe $.mochaPhantomjs reporter: 'dot'

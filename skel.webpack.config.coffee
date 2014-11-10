@@ -4,7 +4,7 @@ AppCachePlugin = require 'appcache-webpack-plugin'
 module.exports = (paths) ->
   entry: "#{paths.source}/skel/skel.coffee"
   output:
-    path: "#{paths.build}/skel"
+    path: paths.skel
     filename: 'skel.js'
   resolve:
     extensions: [

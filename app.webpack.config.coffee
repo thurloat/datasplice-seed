@@ -6,7 +6,7 @@ module.exports = (paths) ->
     app: "#{paths.source}/app/app.coffee"
     test: "#{paths.source}/app/test.coffee"
   output:
-    path: "#{paths.build}/app"
+    path: paths.app
     filename: '[name].js'
   resolve:
     # Allow to omit extensions when requiring these files
