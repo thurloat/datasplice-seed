@@ -1,16 +1,35 @@
 # set up the environment, shared libararies, etc
 require './environment'
-require './skel.less'
-
-ui = React.DOM.h1 null, 'Skeleton Placeholder'
-React.renderComponent ui, document.querySelector '#app'
 
 AppLoader = require './apploader'
+LoadingStatus = require './loadingstatus'
+
+slowLoad = false
+appLoaded = false
+
+mountPoint = document.querySelector '#app'
+uiProps = {}
+renderUI = (newProps) ->
+  _.assign uiProps, newProps
+  # inhibit progress and status unless we have an error or the app is loading
+  # slowly
+  return unless uiProps.error or slowLoad
+
+  React.renderComponent (LoadingStatus uiProps), mountPoint
+
+# wait half a second before enabling the progress UI to keep things less flashy
+setTimeout ->
+  unless appLoaded
+    slowLoad = true
+    renderUI()
+, 500
+
 (AppLoader.loadApp
-  progress: (notification) ->
-    console.warn notification
-  delay: 1000)
+    progress: (notification) ->
+      renderUI progress: notification
+    delay: 1000)
   .then ->
-    console.warn 'app loaded'
+    appLoaded = true
   .catch (error) ->
     console.error error
+    renderUI error: error.message or error

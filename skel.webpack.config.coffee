@@ -22,6 +22,9 @@ module.exports = (paths) ->
     ,
       test: /\.(scss|sass)$/
       loader: 'style-loader!css-loader!sass-loader'
+    ,
+      test: /.(eot|svg|ttf|woff)(\?v=[0-9]\.[0-9]\.[0-9])?$/
+      loader: 'url-loader'
     ]
   plugins: [
     new AppCachePlugin
@@ -33,4 +36,4 @@ module.exports = (paths) ->
   sharedLibraries:
     _: 'lodash'
     async: 'async'
-    React: 'react'
+    React: 'react/addons'
