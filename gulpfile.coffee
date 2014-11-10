@@ -34,7 +34,8 @@ if skelConfig.sharedLibraries
   # are only bundled once
   appConfig.externals = _.invert skelConfig.sharedLibraries
 
-appConfig.plugins.push new AppManifestPlugin
+# create a manifest of the files packaged for the app - skip the unit tests
+appConfig.plugins.push new AppManifestPlugin skip: 'test.js'
 
 
 # entry tasks
@@ -55,7 +56,7 @@ gulp.task 'clean', (cb) ->
 
 # static skeleton resources
 gulp.task 'build:static', ->
-  gulp.src [ "#{paths.source}/index.html", "#{paths.source}/favicon.ico" ]
+  gulp.src [ "#{paths.source}/*.html", "#{paths.source}/favicon.ico" ]
     .pipe gulp.dest "#{paths.build}/skel"
 
 # skeleton application, shared libraries, etc

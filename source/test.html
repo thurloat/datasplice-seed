@@ -3,17 +3,15 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Mocha Spec Runner</title>
-    <link rel="stylesheet" href="styles/mocha.css">
+    <title>DataSplice Seed Unit Test Runner</title>
     </head>
   <body>
     <div id="mocha"></div>
-    <script src="../mocha/mocha.js"></script>
-    <script>mocha.setup('bdd');</script>
-    <script src="src/lib.js"></script>
-    <script src="src/test.js"></script>
-    <script>mocha.checkLeaks();</script>
-    <script>mocha.globals(['LiveReload']);</script>
-    <script>mocha.run();</script>
+    <script>
+      // disable loading the app in skel.js
+      window.DISABLE_APP_LOADER = true
+    </script>
+    <script src="skel.js"></script>
+    <script src="test.js"></script>
   </body>
 </html>

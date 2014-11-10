@@ -13,5 +13,7 @@ module.exports = (options) ->
 
     compiler.plugin 'emit', (compilation, cb) ->
       files = _.keys compilation.assets
+      if options?.skip
+        files = _.without files, options.skip
       compilation.assets[manifestName] = new Manifest files
       cb()

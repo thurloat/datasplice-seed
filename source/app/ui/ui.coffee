@@ -1,11 +1,14 @@
 Jumbotron = require './widgets/jumbotron'
 LessExample = require './lessexample'
-LibraryVersions = require './libraryversions'
+VersionInfo = require './versioninfo'
 
 { div, i, img, h1, h3, a, p, pre } = React.DOM
 
 UI = React.createClass
   displayName: 'UI'
+
+  propTypes:
+    libraryInfo: React.PropTypes.array.isRequired
 
   render: ->
     div className: 'container',
@@ -21,17 +24,7 @@ UI = React.createClass
           LessExample null
 
         Panel title: 'Available Libraries',
-          LibraryVersions
-            libraryInfo: [
-              label: 'Lo-Dash'
-              url: 'http://lodash.com'
-              version: -> _.VERSION
-            ,
-              label: 'React'
-              url: 'http://facebook.github.io/react/index.html'
-              version: -> React.version
-            # todo - webpack, bootstrap, font-awesome, etc
-            ]
+          VersionInfo libraryInfo: @props.libraryInfo
 
 Panel = React.createClass
   displayName: 'panel'

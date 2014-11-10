@@ -2,10 +2,12 @@ webpack = require 'webpack'
 
 module.exports = (paths) ->
   cache:true
-  entry: "#{paths.source}/app/app.coffee"
+  entry:
+    app: "#{paths.source}/app/app.coffee"
+    test: "#{paths.source}/app/test.coffee"
   output:
     path: "#{paths.build}/app"
-    filename: 'app.js'
+    filename: '[name].js'
   resolve:
     # Allow to omit extensions when requiring these files
     extensions: [
@@ -15,6 +17,9 @@ module.exports = (paths) ->
     ]
   module:
     loaders: [
+      test: /_spec\.coffee$/
+      loader: 'mocha'
+    ,
       test: /\.coffee$/
       loader: 'coffee-loader'
     ,

@@ -9,6 +9,14 @@ require 'console-shim'
 (require 'es6-promise').polyfill();
 require 'fetch'
 
+# also ensure Promise.done exists - see:
+# https://www.promisejs.org/polyfills/promise-done-1.0.0.js
+unless Promise::done
+  Promise::done = (cb, eb) ->
+    @then(cb, eb)
+      .then null, (err) ->
+        setTimeout ( () -> throw err ), 0
+
 # basket.js needs to be loaded into the global scope
 require 'imports?this=>window!basket.js'
 # it also needs a mocked RSVP object for promises
