@@ -29,4 +29,3 @@ unless global.console
 
 unless console.debug?
   console.debug = console.log
-
