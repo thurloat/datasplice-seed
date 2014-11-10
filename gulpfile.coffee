@@ -21,21 +21,14 @@ buildPath         = "#{projectPath}/build"
 distPath          = "#{projectPath}/dist"
 nodeModulesPath   = "#{projectPath}/node_modules"
 
-cordovaPath     = "#{buildPath}/cordova"
 jsBuildPath     = "#{buildPath}/js"
 webBuildPath    = "#{buildPath}/web"
 testBuildPath   = "#{buildPath}/test"
-chromeBuildPath = "#{buildPath}/chrome"
 
 globalVendorsPath = "#{webBuildPath}/vendor"
 globalVendorsFileName = 'global.js'
 
 webDistPath       = "#{distPath}/web"
-chromeDistPath    = "#{distPath}/chrome"
-androidDistPath   = "#{distPath}/android"
-iosDistPath       = "#{distPath}/ios"
-
-chromePackageName = 'datasplice-seed.crx'
 
 vendorAssets = [
   {
@@ -53,9 +46,6 @@ hostname = null
 # change this to something unique if you want to run multiple projects
 # side-by-side
 lrPort = $.util.env.lrport or 35729
-
-# TODO:externalize this to a config file
-defaultChromeLocation = '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome'
 
 webpackConfig =
   cache: true
@@ -267,61 +257,8 @@ gulp.task 'build:vendor', ->
       .pipe if $.util.env.production then $.uglify() else $.util.noop()
       .pipe gulp.dest globalVendorsPath
 
-# Copy the chromeapp manifests to build
-gulp.task 'build:chrome', ['build:web'], (finishedTask) ->
-  gulp.src [
-    "#{webBuildPath}/**/*"
-    'chromeapp.js'
-    'manifest.json'
-    'manifest.mobile.json'
-  ]
-    .pipe gulp.dest "#{chromeBuildPath}"
-    .on 'end', finishedTask
-
-gulp.task 'build:android', ['build:cordova']
-gulp.task 'build:ios', ['build:cordova']
-
-gulp.task 'build:cordova', ['build:chrome'], ->
-  # Path exists is harmless. Use this to avoid scary log output
-  pathExistsPattern = /Path already exists/g
-  createCordova = ->
-    new Promise (resolve, reject) ->
-      cmd = 'cca create cordova --link-to=chrome'
-      childProcess.exec cmd, cwd: buildPath, (error, stdout, stderr) ->
-        $.util.log cyan stdout
-        if error
-          if error.toString().match pathExistsPattern
-            $.util.log cyan 'Cordova project already exists'
-            resolve()
-          else
-            $.util.log red 'build:cordova: createCordova() failed'
-            $.util.log red "\t#{error}"
-            reject error
-        else
-          resolve()
-  prepareCordova = ->
-    new Promise (resolve, reject) ->
-      cmd = 'cca prepare'
-      childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
-        $.util.log cyan stdout
-        if error
-          if error.toString().match pathExistsPattern
-            $.util.log cyan 'Cordova project already exists'
-            resolve()
-          else
-            $.util.log red 'build:cordova: createCordova() failed'
-            $.util.log red "\t#{error}"
-            reject error
-        else
-          resolve()
-
-  createCordova().then prepareCordova
-
 gulp.task 'dist', [
   'dist:web'
-  'dist:chrome'
-  'dist:android'
-  'dist:ios'
 ]
 
 gulp.task 'dist:web', ['build:web'], ->
@@ -337,47 +274,6 @@ gulp.task 'dist:web', ['build:web'], ->
     ]
     .pipe gulp.dest webDistPath
 
-gulp.task 'dist:chrome', ['build:chrome'], ->
-  # Allow a different chrome location to be passed on the command line
-  chrome = $.util.env.chrome or defaultChromeLocation
-  cmd = "'#{chrome}' --pack-extension=build/chrome --pack-extension-key=chromeapp.pem"
-
-  packageChrome = ->
-    new Promise (resolve, reject) ->
-      childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
-        if error
-          $.util.log red 'dist:chrome failed:'
-          $.util.log red "\t#{stderr}"
-          reject()
-        else
-          resolve()
-
-  movePackage = ->
-    new Promise (resolve, reject) ->
-      src = "#{buildPath}/chrome.crx"
-      dest = "#{chromeDistPath}"
-      del [ src ], ->
-        gulp.src src
-          .pipe $.rimraf force: true
-          .pipe $.rename chromePackageName
-          .pipe gulp.dest chromeDistPath
-          .on 'end', resolve
-
-  packageChrome().then movePackage
-
-gulp.task 'dist:android', ['build:cordova'], (finishedTask) ->
-  childProcess.exec './build --release', cwd: "#{cordovaPath}/platforms/android/cordova", (error, stdout, stderr) ->
-    if error
-      $.util.log red 'dist:android failed:'
-      $.util.log red "\t#{stderr}"
-    else
-      gulp.src "#{cordovaPath}/platforms/android/ant-build/*.apk"
-        .pipe gulp.dest androidDistPath
-    finishedTask()
-
-gulp.task 'dist:ios', ['build:cordova'], ->
-  $.util.log "\t#{blue 'TODO: build .ipa'}"
-
 do (serverOpts = [
   'build:web'
   'build:test'
@@ -392,32 +288,5 @@ do (serverOpts = [
 gulp.task 'run:test', ['build:test'], ->
   gulp.src "#{jsBuildPath}/test.js", read: false
     .pipe $.mocha reporter: 'nyan'
-
-gulp.task 'run:ios', ['build:cordova'], (finishedTask) ->
-  cmd = "cca run ios #{if $.util.env.emulator then '--emulator' else ''}"
-  childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
-    if error
-      $.util.log red 'ios failed:'
-      $.util.log red "\t#{stderr}"
-    finishedTask()
-
-gulp.task 'run:android', ['build:cordova'], (finishedTask) ->
-  cmd = "cca run android #{if $.util.env.emulator then '--emulator' else ''}"
-  childProcess.exec cmd, cwd: cordovaPath, (error, stdout, stderr) ->
-    if error
-      $.util.log red 'android failed:'
-      $.util.log red "\t#{stderr}"
-    finishedTask()
-
-gulp.task 'run:chrome', ['dist:chrome'], (finishedTask) ->
-  $.util.log "\t#{blue 'TODO'}"
-  # # Allow a different chrome location to be passed on the command line
-  # chrome = $.util.env.chrome or defaultChromeLocation
-  # cmd = "'#{chrome}' #{chromeDistPath}/#{chromePackageName}"
-  # $.util.log "Running #{blue cmd}"
-  # childProcess.exec cmd, cwd: projectPath, (error, stdout, stderr) ->
-  #   if error
-  #     $.util.log red 'run:chrome failed:'
-  #     $.util.log red "\t#{stderr}"
 
 gulp.task 'default', ['build']
