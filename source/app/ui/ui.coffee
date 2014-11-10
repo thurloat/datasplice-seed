@@ -1,8 +1,9 @@
 Jumbotron = require './widgets/jumbotron'
+GulpTasks = require './gulptasks'
 LessExample = require './lessexample'
 VersionInfo = require './versioninfo'
 
-{ div, i, img, h1, h3, a, p, pre } = React.DOM
+{ div, i, h1, h3, a, p } = React.DOM
 
 UI = React.createClass
   displayName: 'UI'
@@ -19,6 +20,9 @@ UI = React.createClass
         p null,
           'Flexible application framework supporting offline caching, dynamic
           application manifests, and other cool stuff'
+
+        Panel title: 'Gulp Tasks',
+          GulpTasks null
 
         Panel title: 'LESS Support',
           LessExample null
