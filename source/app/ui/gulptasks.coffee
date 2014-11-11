@@ -26,7 +26,8 @@ GulpTasks = React.createClass
       ul null,
         li null,
           code null, '--nouglify'
-          ': disable minification of JS and CSS'
+          " disable minification of JS and CSS (the run task doesn't minify the
+          app files by default)"
         li null,
           code null, '--listenport'
           ' specifies the listen port for the run task (8080 by default)'
