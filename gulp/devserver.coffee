@@ -8,7 +8,7 @@ module.exports = (compiler, buildPath) ->
   new WebpackDevServer compiler,
     contentBase: buildPath
     stats: { colors: true }
-  .listen port, 'localhost', (err) ->
+  .listen port, (err) ->
     if err
       throw new $.util.PluginError 'webpack-dev-server', err
 
