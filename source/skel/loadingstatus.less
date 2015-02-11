@@ -1,0 +1,94 @@
+@import (css) '~normalize.css/normalize.css';
+
+@loading-gradient-light: #ffcc66;
+@loading-gradient: #ec8f25;
+
+.loading-status {
+  background-color: @loading-gradient-light;
+  .gradient(@loading-gradient-light, @loading-gradient);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1000;
+
+  & > .logo {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    width: 150px;
+    background-image: url('../images/ds_icon_bw.svg');
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    background-position: center center;
+  }
+  & > .logo.loading {
+    .animate(blink, 1s);
+    .transition(all, 1s);
+  }
+
+  & > .logo > .message {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    margin-top: 125px;
+    text-align: center;
+    color: #006fa2;
+  }
+  & > .logo.error > .message {
+    color: #9d261d;
+  }
+}
+
+// mixins
+.gradient(@startColor: #555, @endColor: #333) {
+  background-color: mix(@startColor, @endColor, 60%);
+  background-image: -moz-linear-gradient(top, @startColor, @endColor); // FF 3.6+
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@startColor), to(@endColor)); // Safari 4+, Chrome 2+
+  background-image: -webkit-linear-gradient(top, @startColor, @endColor); // Safari 5.1+, Chrome 10+
+  background-image: -o-linear-gradient(top, @startColor, @endColor); // Opera 11.10
+  background-image: linear-gradient(to bottom, @startColor, @endColor); // Standard, IE10
+  background-repeat: repeat-x;
+  filter: e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d', GradientType=0)",argb(@startColor),argb(@endColor))); // IE9 and down
+}
+
+.animate(@keyframe, @duration) {
+  -webkit-animation: @keyframe @duration infinite;
+     -moz-animation: @keyframe @duration infinite;
+          animation: @keyframe @duration infinite;
+}
+
+.transition(@prop, @duration) {
+  -webkit-transition: @prop @duration ease-in-out;
+     -moz-transition: @prop @duration ease-in-out;
+      -ms-transition: @prop @duration ease-in-out;
+          transition: @prop @duration ease-in-out;
+}
+
+@-webkit-keyframes blink {
+  0% {
+      opacity:1;
+  }
+  50% {
+      opacity:0.1;
+  }
+  100% {
+      opacity:1;
+  }
+}
+@-moz-keyframes blink {
+  0% {
+      opacity:1;
+  }
+  50% {
+      opacity:0.1;
+  }
+  100% {
+      opacity:1;
+  }
+}
