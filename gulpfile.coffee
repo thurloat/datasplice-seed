@@ -95,4 +95,4 @@ gulp.task 'run:webpack', ->
 
 gulp.task 'run:mocha', ->
   gulp.src "#{paths.dist}/test.html"
-    .pipe $.mochaPhantomjs reporter: 'dot'
+    .pipe $.mochaPhantomjs reporter: './node_modules/mocha/lib/reporters/nyan.js'
