@@ -7,7 +7,7 @@ window.React = React
 
 require 'console-shim'
 (require 'es6-promise').polyfill();
-require 'fetch'
+require 'whatwg-fetch'
 
 # also ensure Promise.done exists - see:
 # https://www.promisejs.org/polyfills/promise-done-1.0.0.js

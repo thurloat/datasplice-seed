@@ -1,7 +1,7 @@
 require './loadingstatus.less'
 
 { div, span } = React.DOM
-{ classSet } = React.addons
+cx = require 'classnames'
 
 LoadingStatus = React.createClass
   displayName: 'LoadingStatus'
@@ -13,8 +13,7 @@ LoadingStatus = React.createClass
   render: ->
     div className: 'loading-status',
       div
-        className: classSet
-          logo: true
+        className: cx 'logo',
           loading: not @props.error
           error: @props.error?
       ,

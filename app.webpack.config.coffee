@@ -30,7 +30,7 @@ module.exports = (paths) ->
       loader: 'style-loader!css-loader!sass-loader?\
         includePaths[]=node_modules'
     ,
-      test: /.(eot|svg|ttf|woff)(\?v=[0-9]\.[0-9]\.[0-9])?$/
+      test: /.(eot|svg|ttf|woff2?)(\?v=[0-9]\.[0-9]\.[0-9])?$/
       loader: 'url-loader'
     ]
   plugins: [

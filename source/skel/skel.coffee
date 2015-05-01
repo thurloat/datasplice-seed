@@ -2,7 +2,7 @@
 require './environment'
 
 AppLoader = require './apploader'
-LoadingStatus = require './loadingstatus'
+LoadingStatus = React.createFactory require './loadingstatus'
 
 unless window.DISABLE_APP_LOADER
   slowLoad = false
@@ -16,7 +16,7 @@ unless window.DISABLE_APP_LOADER
     # slowly
     return unless uiProps.error or slowLoad
 
-    React.renderComponent (LoadingStatus uiProps), mountPoint
+    React.render (LoadingStatus uiProps), mountPoint
 
   # wait half a second before enabling the progress UI to keep things less flashy
   setTimeout ->

@@ -1,7 +1,7 @@
-Jumbotron = require './widgets/jumbotron'
-GulpTasks = require './gulptasks'
-LessExample = require './lessexample'
-VersionInfo = require './versioninfo'
+Jumbotron = React.createFactory require './widgets/jumbotron'
+GulpTasks = React.createFactory require './gulptasks'
+LessExample = React.createFactory require './lessexample'
+VersionInfo = React.createFactory require './versioninfo'
 
 { div, i, h1, h3, a, p } = React.DOM
 
@@ -30,7 +30,7 @@ UI = React.createClass
         Panel title: 'Available Libraries',
           VersionInfo libraryInfo: @props.libraryInfo
 
-Panel = React.createClass
+Panel = React.createFactory React.createClass
   displayName: 'panel'
 
   propTypes:
