@@ -1,46 +1,55 @@
-Jumbotron = React.createFactory require './widgets/jumbotron'
-GulpTasks = React.createFactory require './gulptasks'
-LessExample = React.createFactory require './lessexample'
-VersionInfo = React.createFactory require './versioninfo'
+Radium = require 'radium'
 
-{ div, i, h1, h3, a, p } = React.DOM
+Navbar = React.createFactory require './navbar'
+AppMenu = React.createFactory require './appmenu'
+SearchDrawer = React.createFactory require './searchdrawer'
+Content = React.createFactory require './content'
+
+Style = React.createFactory Radium.Style
+{ appRules } = require './stylevariables'
+
+{ div } = React.DOM
 
 UI = React.createClass
   displayName: 'UI'
 
-  propTypes:
-    libraryInfo: React.PropTypes.array.isRequired
+  getInitialState: ->
+    menuOpen: false
+    searchOpen: false
 
   render: ->
-    div className: 'container',
-      Jumbotron fullWidth: false,
-        h1 null,
-          i className: 'fa fa-leaf'
-          ' Seed Application Loaded'
-        p null,
-          'Flexible application framework supporting offline caching, dynamic
-          application manifests, and other cool stuff'
+    div
+      style:
+        marginTop: '50px'
+    ,
+      AppMenu
+        open: @state.menuOpen
+        hide: _.bind @_appMenu, null, false
 
-        Panel title: 'Gulp Tasks',
-          GulpTasks null
+      Navbar
+        showMenu: _.bind @_appMenu, null, true
+        showSearch: _.bind @_searchDrawer, null, true
 
-        Panel title: 'LESS Support',
-          LessExample null
+      SearchDrawer
+        open: @state.searchOpen
+        hide: _.bind @_searchDrawer, null, false
 
-        Panel title: 'Available Libraries',
-          VersionInfo libraryInfo: @props.libraryInfo
+      Content null
 
-Panel = React.createFactory React.createClass
-  displayName: 'panel'
+      Style rules: appRules
 
-  propTypes:
-    title: React.PropTypes.string.isRequired
+  _appMenu: (open) ->
+    @setState if open
+      menuOpen: true
+      searchOpen: false
+    else
+      menuOpen: false
 
-  render: ->
-    div className: 'panel panel-info',
-      div className: 'panel-heading',
-        h3 className: 'panel-title', @props.title
-      div className: 'panel-body',
-        @props.children
+  _searchDrawer: (open) ->
+    @setState if open
+      searchOpen: true
+      menuOpen: false
+    else
+      searchOpen: false
 
 module.exports = UI

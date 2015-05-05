@@ -12,6 +12,7 @@
     "font-awesome-webpack": "0.0.3",
     "lodash": "^3.7.0",
     "normalize.css": "^3.0.3",
+    "radium": "^0.11.1",
     "react": "^0.13.2",
     "whatwg-fetch": "^0.7.0"
   },
