@@ -6,7 +6,7 @@ cx = require 'classnames'
 
 getStyles = (props) ->
   base:
-    position: 'absolute'
+    position: 'fixed'
     top: "#{props.topOffset}px"
     bottom: 0
     width: "#{props.width}px"
@@ -22,6 +22,14 @@ getStyles = (props) ->
 
   right:
     right: 0
+
+  content:
+    position: 'absolute'
+    top: '50px'
+    right: 0
+    bottom: 0
+    left: 0
+    'overflow-y': 'auto'
 
 Drawer = React.createClass Radium.wrap
   displayName: 'Drawer'
@@ -67,5 +75,8 @@ Drawer = React.createClass Radium.wrap
             a onClick: @props.hide,
               i className: "fa fa-#{@props.toggleIcon}"
         a className: 'navbar-brand', @props.title
+
+      div style: styles.content,
+        @props.children
 
 module.exports = Drawer

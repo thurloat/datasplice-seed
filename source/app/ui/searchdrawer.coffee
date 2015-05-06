@@ -1,4 +1,5 @@
 Drawer = React.createFactory require './widgets/drawer'
+FakeContent = React.createFactory require './widgets/fakecontent'
 
 SearchDrawer = React.createClass
   displayName: 'SearchDrawer'
@@ -15,5 +16,7 @@ SearchDrawer = React.createClass
       position: 'right'
       zIndex: 2000
       hide: @props.hide
+    ,
+      FakeContent paragraphs: 2
 
 module.exports = SearchDrawer

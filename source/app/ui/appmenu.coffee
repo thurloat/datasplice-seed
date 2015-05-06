@@ -1,4 +1,5 @@
 Drawer = React.createFactory require './widgets/drawer'
+FakeContent = React.createFactory require './widgets/fakecontent'
 
 AppMenu = React.createClass
   displayName: 'AppMenu'
@@ -15,5 +16,7 @@ AppMenu = React.createClass
       open: @props.open
       position: 'left'
       hide: @props.hide
+    ,
+      FakeContent paragraphs: 5
 
 module.exports = AppMenu

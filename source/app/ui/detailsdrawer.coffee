@@ -1,4 +1,5 @@
 Drawer = React.createFactory require './widgets/drawer'
+FakeContent = React.createFactory require './widgets/fakecontent'
 
 DetailsDrawer = React.createClass
   displayName: 'DetailsDrawer'
@@ -16,5 +17,7 @@ DetailsDrawer = React.createClass
       topOffset: 51
       width: 175
       hide: @props.hide
+    ,
+      FakeContent paragraphs: 2
 
 module.exports = DetailsDrawer

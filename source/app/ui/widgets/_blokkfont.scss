@@ -1,0 +1,14 @@
+$blokk-font-path: '../../../fonts/';
+$blokk-font-name: 'BLOKKNeue-Regular';
+@font-face {
+  font-family: 'Blokk Neue';
+  src: url('#{$blokk-font-path}#{$blokk-font-name}.eot');
+  src: url('#{$blokk-font-path}#{$blokk-font-name}.eot?#iefix') format('embedded-opentype'),
+       url('#{$blokk-font-path}#{$blokk-font-name}.woff') format('woff'),
+       url('#{$blokk-font-path}#{$blokk-font-name}.ttf') format('truetype'),
+       url('#{$blokk-font-path}#{$blokk-font-name}.svg#glyphblokks_halflingsregular') format('svg');
+}
+
+.blokk {
+  font-family: 'Blokk Neue';
+}
