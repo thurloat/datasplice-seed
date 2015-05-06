@@ -29,7 +29,7 @@ getStyles = (props) ->
     right: 0
     bottom: 0
     left: 0
-    'overflow-y': 'auto'
+    overflowY: 'auto'
 
 Drawer = React.createClass Radium.wrap
   displayName: 'Drawer'

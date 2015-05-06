@@ -10,7 +10,7 @@ TextContent = React.createClass
     paragraphs: 5
 
   render: ->
-    div null,
+    div style: { marginTop: '1em' },
       ul
         className: 'pagination'
         style: { margin: '0 1em' }

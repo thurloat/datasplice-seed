@@ -26,8 +26,8 @@ FakeContent = React.createClass
 
   render: ->
     div style: { margin: @props.margin },
-      for line in @state.text
-        p className: 'blokk', style: { color: @props.textColor },
+      for line, index in @state.text
+        p key:index, className: 'blokk', style: { color: @props.textColor },
           line
 
 module.exports = FakeContent
