@@ -1,4 +1,3 @@
-# { Map, Marker, Popup, TileLayer } = require 'react-leaflet'
 ReactLeaflet = require 'react-leaflet'
 Map = React.createFactory ReactLeaflet.Map
 Marker = React.createFactory ReactLeaflet.Marker
@@ -8,35 +7,29 @@ TileLayer = React.createFactory ReactLeaflet.TileLayer
 Radium = require 'radium'
 Style = React.createFactory Radium.Style
 
+FillViewportMixin = require './fillviewportmixin'
+
 { div, span } = React.DOM
 
 require 'leaflet/dist/leaflet.css'
 
-MapContent = React.createClass
+MapContent = React.createClass Radium.wrap
   displayName: 'MapContent'
+
+  mixins: [ FillViewportMixin ]
 
   propTypes:
     position: React.PropTypes.arrayOf React.PropTypes.number
     zoom: React.PropTypes.number
-    topOffset: React.PropTypes.string
 
   getDefaultProps: ->
     position: [ 51.505, -0.09 ]
     zoom: 13
-    topOffset: 0
-    rightOffset: 0
-    bottomOffset: 0
-    leftOffset: 0
 
   render: ->
     div
       className: 'map-content'
-      style:
-        position: 'absolute'
-        top: @props.topOffset
-        right: @props.rightOffset
-        bottom: @props.bottomOffset
-        left: @props.leftOffset
+      style: [ @fillStyle() ]
     ,
       Map
         center: @props.position

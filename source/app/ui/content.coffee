@@ -29,7 +29,9 @@ Content = React.createClass
 
       switch @state.mode
         when 'text'
-          TextContent null
+          TextContent
+            topOffset: '100px'
+            rightOffset: if @state.detailsOpen then '175px' else 0
         when 'map'
           MapContent
             topOffset: '100px'

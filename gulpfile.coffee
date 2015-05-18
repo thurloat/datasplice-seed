@@ -40,6 +40,11 @@ if skelConfig.sharedLibraries
 # create a manifest of the files packaged for the app - skip the unit tests
 appConfig.plugins.push new AppManifestPlugin skip: 'test.js'
 
+uglifyIfNeeded = (config) ->
+  if $.util.env.production
+    config.plugins or= []
+    uglifyOptions = compress: warnings: false
+    config.plugins.push new webpack.optimize.UglifyJsPlugin uglifyOptions
 
 # entry tasks
 
@@ -69,15 +74,13 @@ gulp.task 'build:static', ->
 
 # skeleton application, shared libraries, etc
 gulp.task 'build:skel', ['build:static'], (cb) ->
-  unless $.util.env.nouglify
-    skelConfig.plugins.push new webpack.optimize.UglifyJsPlugin
+  uglifyIfNeeded skelConfig
   webpack skelConfig, (err, stats) ->
     $.util.log '[skel:src]', stats.toString colors: true
     cb err
 
 gulp.task 'build:app', (cb) ->
-  unless $.util.env.nouglify
-    appConfig.plugins.push new webpack.optimize.UglifyJsPlugin
+  uglifyIfNeeded appConfig
 
   webpack appConfig, (err, stats) ->
     $.util.log '[app:src]', stats.toString colors: true

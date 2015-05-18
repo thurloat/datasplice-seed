@@ -17,6 +17,12 @@ UI = React.createClass
     menuOpen: false
     searchOpen: false
 
+  componentDidMount: ->
+    _.delay ->
+      console.warn 'scroll'
+      window.scrollTo 0, 1
+    , 1000
+
   render: ->
     div
       style:
