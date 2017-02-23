@@ -12,9 +12,9 @@ DataSplice Seed is a sample cross-platform web application that supports packagi
 
 It is built with the following technologies:
 
-- App: [ReactJS](facebook.github.io/react/) / [SASS](sass-lang.com) / [When](https://github.com/cujojs/when)
-- Tests: [Mocha](http://mochajs.org/) / [Chai](chaijs.com) / [SinonJS](http://sinonjs.org/)
-- Build: [GulpJS](gulpjs.com) / [Bower](bower.io) / [Webpack](webpack.github.io) / [Cordova](cordova.apache.org) / [MobileChromeApps](https://github.com/MobileChromeApps/mobile-chrome-apps)
+- App: [ReactJS](https://facebook.github.io/react/) / [SASS](http://sass-lang.com/) / [When](https://github.com/cujojs/when)
+- Tests: [Mocha](http://mochajs.org/) / [Chai](http://chaijs.com/) / [SinonJS](http://sinonjs.org/)
+- Build: [GulpJS](http://gulpjs.com) / [Bower](https://bower.io) / [Webpack](https://webpack.github.io/) / [Cordova](https://cordova.apache.org/) / [MobileChromeApps](https://github.com/MobileChromeApps/mobile-chrome-apps)
 
 ### Build
 
